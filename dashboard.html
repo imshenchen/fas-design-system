@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>工廠生產看板 — Delta FAS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+/* ── Design Tokens (from fas_design_kit_token.json) ── */
+:root {
+  /* Brand */
+  --delta-blue: #0087dc;
+  --primary: #00adef;
+  --secondary: #727171;
+
+  /* Status */
+  --status-processing: #00adef;
+  --status-success: #68ad23;
+  --status-warning: #f5b900;
+  --status-emergency: #f66d20;
+  --status-error: #f23a43;
+  --status-idle: #808080;
+
+  /* Background */
+  --bg-surface: #ffffff;
+  --bg-surface-dim: #fafafa;
+  --bg-surface-dim-var: #f6f7f9;
+  --bg-container-low: #f3f3f3;
+  --bg-container-high: #ebebeb;
+
+  /* Elevation */
+  --elevation-02dp: #ffffff;
+
+  /* Text */
+  --text-white: #ffffff;
+  --text-high: #333333;
+  --text-body: #333333;
+  --text-medium: #727171;
+  --text-disabled: #bfbfbf;
+
+  /* Component Status */
+  --comp-hover: #f0fbff;
+  --comp-hover-contained: #0088bd;
+  --comp-disabled-container: #e6e6e6;
+
+  /* Chip backgrounds */
+  --chip-processing: #c2eeff;
+  --chip-success: #e0fbc6;
+  --chip-warning: #fff0c2;
+  --chip-emergency: #feece2;
+  --chip-error: #fde2e4;
+  --chip-idle: #ebebeb;
+
+  /* Chip text */
+  --chip-text-processing: #00638a;
+  --chip-text-success: #365912;
+  --chip-text-warning: #5c4500;
+  --chip-text-emergency: #ac4207;
+  --chip-text-error: #bb0c15;
+  --chip-text-idle: #585858;
+
+  /* Alert backgrounds (+5%) */
+  --alert-bg-error: #fef1f1;
+  --alert-bg-warning: #fffaeb;
+  --alert-bg-success: #effbe2;
+  --alert-bg-processing: #f0fbff;
+
+  /* Alert borders */
+  --alert-border-error: #fccacd;
+  --alert-border-warning: #fce8a0;
+  --alert-border-success: #c6f0a0;
+  --alert-border-processing: #a8e6ff;
+
+  /* Alert text */
+  --alert-text-error: #bb0c15;
+  --alert-text-warning: #5c4500;
+  --alert-text-success: #365912;
+  --alert-text-processing: #00638a;
+
+  /* Divider */
+  --divider: #d9d9d9;
+
+  /* Chart colors */
+  --chart-1: #00adef;
+  --chart-2: #f5b900;
+  --chart-3: #68ad23;
+  --chart-4: #f66d20;
+  --chart-5: #8a74ad;
+  --chart-6: #f23a43;
+
+  /* Scroll */
+  --scroll-bar: rgba(0,0,0,0.3);
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Noto Sans TC', 'Roboto', sans-serif;
+  background: var(--bg-surface-dim);
+  color: var(--text-body);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Typography ── */
+/* 繁體中文/Subhead 1: Noto Sans TC Medium 16px lh24 */
+.typo-subhead1 { font-family: 'Noto Sans TC', sans-serif; font-weight: 500; font-size: 16px; line-height: 24px; }
+/* 繁體中文/Body 2: Noto Sans TC Regular 14px lh20 ls0.25 */
+.typo-body2 { font-family: 'Noto Sans TC', sans-serif; font-weight: 400; font-size: 14px; line-height: 20px; letter-spacing: 0.035px; }
+/* English/Subhead1: Roboto Medium 16px lh24 ls0.5 */
+.typo-en-subhead1 { font-family: 'Roboto', sans-serif; font-weight: 500; font-size: 16px; line-height: 24px; letter-spacing: 0.08px; }
+/* English/Button: Roboto Medium 14px lh20 ls0 */
+.typo-btn { font-family: 'Roboto', sans-serif; font-weight: 500; font-size: 14px; line-height: 20px; }
+/* Caption: Roboto Regular 12px lh18 */
+.typo-caption { font-family: 'Roboto', sans-serif; font-weight: 400; font-size: 12px; line-height: 18px; }
+
+/* ── Top Navigation Bar ── */
+.top-nav {
+  height: 56px;
+  background: var(--delta-blue);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 4px rgba(46,46,46,0.24);
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+  color: var(--text-white);
+  font-family: 'Roboto', sans-serif;
+  font-weight: 700; font-size: 18px; letter-spacing: .5px;
+}
+.nav-logo svg { width: 28px; height: 28px; flex-shrink: 0; }
+.nav-divider {
+  width: 1px; height: 20px;
+  background: rgba(255,255,255,0.3);
+}
+.nav-title {
+  color: rgba(255,255,255,0.85);
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 14px; font-weight: 400;
+}
+.nav-spacer { flex: 1; }
+.nav-time {
+  color: rgba(255,255,255,0.9);
+  font-family: 'Roboto', sans-serif;
+  font-size: 13px; font-variant-numeric: tabular-nums;
+}
+
+/* ── Button (from Figma) ── */
+/* Outlined S-36: border 1px solid primary, px-9px py-6px, rounded-4px, h-36px */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 6px 16px; border-radius: 4px;
+  font-family: 'Roboto', sans-serif; font-weight: 500;
+  font-size: 14px; line-height: 20px;
+  cursor: pointer; border: none;
+  white-space: nowrap; transition: background .15s, border-color .15s;
+  text-decoration: none;
+}
+.btn-outlined {
+  border: 1px solid var(--primary);
+  background: transparent;
+  color: var(--primary);
+}
+.btn-outlined:hover { background: var(--comp-hover); }
+.btn-contained {
+  background: var(--primary);
+  color: var(--text-white);
+  border: 1px solid transparent;
+}
+.btn-contained:hover { background: var(--comp-hover-contained); }
+.btn-secondary-outlined {
+  border: 1px solid var(--secondary);
+  background: transparent;
+  color: var(--secondary);
+  padding: 6px 9px;
+}
+.btn-secondary-outlined:hover { background: #f5f5f5; }
+.btn-text {
+  background: transparent; color: var(--primary);
+  padding: 6px 8px;
+  font-size: 14px;
+}
+.btn-text:hover { background: var(--comp-hover); }
+
+/* ── Alert / Inline Alert (from Figma) ── */
+/* bg, full 1px border all sides, rounded-4, gap-8, pl-16 pr-10 py-10 */
+.alert {
+  display: flex; gap: 8px; align-items: flex-start;
+  border: 1px solid; border-radius: 4px;
+  padding: 10px 10px 10px 16px;
+}
+.alert-icon { padding-top: 6px; flex-shrink: 0; width: 24px; height: 24px; }
+.alert-icon svg { width: 24px; height: 24px; }
+.alert-body { flex: 1; min-width: 0; }
+.alert-title {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 500; font-size: 16px; line-height: 24px;
+}
+.alert-desc {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 400; font-size: 14px; line-height: 20px;
+  letter-spacing: 0.035px; padding-bottom: 6px;
+}
+.alert-actions { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+.alert-error {
+  background: var(--alert-bg-error);
+  border-color: var(--alert-border-error);
+}
+.alert-error .alert-title,
+.alert-error .alert-desc { color: var(--alert-text-error); }
+.alert-warning {
+  background: var(--alert-bg-warning);
+  border-color: var(--alert-border-warning);
+}
+.alert-warning .alert-title,
+.alert-warning .alert-desc { color: var(--alert-text-warning); }
+
+/* ── Card (from Figma) ── */
+/* Elevated: rounded-4, shadow 0 1px 4px rgba(46,46,46,0.12), bg=elevation-02dp (white) */
+.card {
+  background: var(--elevation-02dp);
+  border-radius: 4px;
+  box-shadow: 0 1px 4px 0 rgba(46,46,46,0.12),
+              inset 0 0 2px 0 rgba(255,255,255,0.12);
+  overflow: hidden;
+}
+/* Card Header: bg=container-high(#ebebeb), px-16 py-6 */
+.card-header {
+  background: var(--bg-container-high);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 6px 16px;
+  min-height: 36px;
+}
+.card-header-title {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500; font-size: 16px; line-height: 24px;
+  letter-spacing: 0.08px; color: var(--text-high);
+}
+.card-body { padding: 16px; }
+
+/* ── Status Chip - Round Filled (from Figma) ── */
+/* L size: h-32, rounded-16, p-4, label px-8, Roboto Regular 14px lh20 ls0.035 */
+.chip {
+  display: inline-flex; align-items: center;
+  height: 32px; border-radius: 16px;
+  padding: 4px;
+}
+.chip-label {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400; font-size: 14px;
+  line-height: 20px; letter-spacing: 0.035px;
+  padding: 0 8px; white-space: nowrap;
+}
+/* S size: h-24 */
+.chip-s { height: 24px; }
+.chip-processing { background: var(--chip-processing); }
+.chip-processing .chip-label { color: var(--chip-text-processing); }
+.chip-success { background: var(--chip-success); }
+.chip-success .chip-label { color: var(--chip-text-success); }
+.chip-warning { background: var(--chip-warning); }
+.chip-warning .chip-label { color: var(--chip-text-warning); }
+.chip-emergency { background: var(--chip-emergency); }
+.chip-emergency .chip-label { color: var(--chip-text-emergency); }
+.chip-error { background: var(--chip-error); }
+.chip-error .chip-label { color: var(--chip-text-error); }
+.chip-idle { background: var(--chip-idle); }
+.chip-idle .chip-label { color: var(--chip-text-idle); }
+
+/* ── Progress for dashboard (from Figma) ── */
+/* Track: bg=container-high, thin 6px bar */
+.progress-wrap { display: flex; flex-direction: column; gap: 4px; }
+.progress-meta { display: flex; justify-content: space-between; align-items: center; }
+.progress-label { font-family: 'Roboto', sans-serif; font-weight: 400; font-size: 12px; color: var(--text-medium); }
+.progress-value { font-family: 'Roboto', sans-serif; font-weight: 500; font-size: 12px; color: var(--text-high); font-variant-numeric: tabular-nums; }
+.progress-track { height: 6px; background: var(--bg-container-high); border-radius: 3px; overflow: hidden; }
+.progress-bar { height: 100%; border-radius: 3px; background: var(--primary); transition: width .4s; }
+.progress-bar.success { background: var(--status-success); }
+.progress-bar.warning { background: var(--status-warning); }
+.progress-bar.error   { background: var(--status-error); }
+
+/* ── Bullet graph for dashboard (from Figma) ── */
+.bullet-wrap { display: flex; flex-direction: column; gap: 4px; }
+.bullet-label { font-family: 'Roboto', sans-serif; font-size: 12px; color: var(--text-medium); }
+.bullet-track {
+  height: 8px; background: var(--bg-container-high);
+  border-radius: 2px; position: relative; overflow: visible;
+}
+.bullet-actual { height: 100%; border-radius: 2px; background: var(--primary); }
+.bullet-target {
+  position: absolute; top: -3px; bottom: -3px; width: 2px;
+  background: var(--text-high); border-radius: 1px;
+}
+.bullet-vals { display: flex; justify-content: space-between; font-size: 11px; font-family: 'Roboto'; color: var(--text-medium); }
+
+/* ── Divider ── */
+.divider { border: none; border-top: 1px solid var(--divider); }
+
+/* ── Data Table ── */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead th {
+  padding: 8px 16px; text-align: left;
+  font-family: 'Roboto', sans-serif; font-weight: 500;
+  font-size: 13px; color: var(--text-high);
+  border-bottom: 1px solid var(--divider);
+  background: var(--bg-surface-dim-var);
+  white-space: nowrap; letter-spacing: 0.08px;
+}
+tbody tr { border-bottom: 1px solid var(--divider); transition: background .1s; }
+tbody tr:nth-child(even) { background: var(--bg-surface-dim-var); }
+tbody tr:hover { background: var(--comp-hover); }
+tbody td { padding: 8px 16px; color: var(--text-body); vertical-align: middle; }
+.td-right { text-align: right; font-variant-numeric: tabular-nums; font-family: 'Roboto', sans-serif; }
+.td-mono { font-family: 'Roboto', sans-serif; font-variant-numeric: tabular-nums; color: var(--text-medium); }
+
+/* ── Page Layout ── */
+.page { padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; }
+.page-header { display: flex; align-items: flex-start; justify-content: space-between; }
+.page-title { font-family: 'Noto Sans TC', sans-serif; font-weight: 700; font-size: 20px; color: var(--text-high); }
+.page-subtitle { font-size: 13px; color: var(--text-medium); margin-top: 2px; font-family: 'Roboto', sans-serif; }
+.row-actions { display: flex; gap: 8px; align-items: center; }
+
+/* ── KPI Grid ── */
+.kpi-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; }
+.kpi-card {
+  background: var(--elevation-02dp);
+  border-radius: 4px;
+  box-shadow: 0 1px 4px 0 rgba(46,46,46,0.12);
+  padding: 16px;
+  display: flex; flex-direction: column; gap: 6px;
+  border-top: 3px solid var(--primary);
+}
+.kpi-card.success { border-top-color: var(--status-success); }
+.kpi-card.warning { border-top-color: var(--status-warning); }
+.kpi-card.error   { border-top-color: var(--status-error); }
+.kpi-label { font-family: 'Noto Sans TC', sans-serif; font-size: 12px; color: var(--text-medium); }
+.kpi-value {
+  font-family: 'Roboto', sans-serif; font-weight: 700;
+  font-size: 28px; line-height: 1.1; color: var(--text-high);
+  font-variant-numeric: tabular-nums;
+}
+.kpi-value .unit { font-size: 14px; font-weight: 400; color: var(--text-medium); margin-left: 2px; }
+.kpi-footer { display: flex; align-items: center; gap: 6px; font-size: 12px; font-family: 'Roboto', sans-serif; }
+.trend-up   { color: var(--status-success); }
+.trend-down { color: var(--status-error); }
+.trend-warn { color: var(--status-warning); }
+.kpi-meta   { color: var(--text-medium); }
+
+/* ── Two-column layout ── */
+.two-col { display: grid; grid-template-columns: 1fr 320px; gap: 16px; }
+
+/* ── Bar chart (CSS) ── */
+.bar-chart { display: flex; align-items: flex-end; gap: 4px; height: 60px; }
+.bar-chart .bar { flex: 1; border-radius: 2px 2px 0 0; min-height: 4px; background: var(--primary); opacity: .7; cursor: pointer; transition: opacity .15s; }
+.bar-chart .bar:hover { opacity: 1; }
+.bar-chart .bar.current { opacity: 1; }
+.bar-chart .bar.warn { background: var(--status-warning); }
+.chart-x { display: flex; gap: 4px; margin-top: 4px; }
+.chart-x span { flex: 1; text-align: center; font-size: 10px; font-family: 'Roboto'; color: var(--text-medium); }
+
+/* ── Donut chart ── */
+.donut-wrap { display: flex; align-items: center; gap: 20px; }
+.donut { position: relative; width: 88px; height: 88px; flex-shrink: 0; }
+.donut svg { transform: rotate(-90deg); }
+.donut-val {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-family: 'Roboto'; font-weight: 700; font-size: 18px; color: var(--text-high);
+}
+.donut-val small { font-size: 10px; font-weight: 400; color: var(--text-medium); margin-top: 1px; }
+.legend { display: flex; flex-direction: column; gap: 8px; }
+.legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; font-family: 'Roboto'; }
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.legend-name { color: var(--text-medium); }
+.legend-val  { font-weight: 500; color: var(--text-high); margin-left: 4px; }
+
+/* ── Event list ── */
+.event-list { display: flex; flex-direction: column; }
+.event-item { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--divider); }
+.event-item:last-child { border-bottom: none; }
+.event-dot-col { display: flex; flex-direction: column; align-items: center; padding-top: 3px; flex-shrink: 0; }
+.event-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.event-line { flex: 1; width: 1px; background: var(--divider); margin-top: 4px; }
+.event-content { flex: 1; min-width: 0; }
+.event-msg { font-family: 'Noto Sans TC'; font-size: 13px; color: var(--text-body); }
+.event-meta { font-size: 11px; color: var(--text-medium); margin-top: 2px; font-family: 'Roboto'; }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--scroll-bar); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- ── Top Navigation Bar ── -->
+<nav class="top-nav">
+  <div class="nav-logo">
+    <svg viewBox="0 0 28 28" fill="none">
+      <rect width="28" height="28" rx="4" fill="white" fill-opacity=".15"/>
+      <path d="M6 14L14 6L22 14L14 22L6 14Z" fill="white"/>
+      <path d="M14 10L18 14L14 18L10 14L14 10Z" fill="#0087dc"/>
+    </svg>
+    Delta FAS
+  </div>
+  <div class="nav-divider"></div>
+  <span class="nav-title">工廠生產管理系統</span>
+  <div class="nav-spacer"></div>
+  <span class="nav-time" id="clock"></span>
+  <!-- Badge: uses chip-error style in nav context -->
+  <span class="chip chip-s chip-error" style="cursor:pointer">
+    <span class="chip-label">2 警報</span>
+  </span>
+</nav>
+
+<div class="page">
+
+  <!-- ── Page Header ── -->
+  <div class="page-header">
+    <div>
+      <div class="page-title">生產看板 — 台南廠 Line A</div>
+      <div class="page-subtitle">即時資料 · 每 30 秒自動更新</div>
+    </div>
+    <div class="row-actions">
+      <button class="btn btn-outlined">匯出報表</button>
+      <button class="btn btn-contained">全螢幕模式</button>
+    </div>
+  </div>
+
+  <!-- ── Alerts (Inline Alert from Figma) ── -->
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <!-- Error Alert -->
+    <div class="alert alert-error">
+      <span class="alert-icon">
+        <svg viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" fill="#f23a43"/>
+          <path d="M15 9L9 15M9 9l6 6" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <div class="alert-body">
+        <div class="alert-title">機台 CNC-07 異常停機</div>
+        <div class="alert-desc">主軸過熱警報，已派員處理。預計 15 分鐘恢復。</div>
+      </div>
+      <div class="alert-actions">
+        <span class="typo-caption" style="color:var(--text-medium);white-space:nowrap">14:18:44</span>
+        <button class="btn btn-secondary-outlined" style="font-size:13px;height:32px">查看詳情</button>
+        <button class="btn btn-text" style="padding:6px;color:var(--alert-text-error)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+    <!-- Warning Alert -->
+    <div class="alert alert-warning">
+      <span class="alert-icon">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M12 2L22 21H2L12 2Z" fill="#f5b900"/>
+          <path d="M12 9v5M12 17h.01" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <div class="alert-body">
+        <div class="alert-title">Line B 產能低於目標 12%</div>
+        <div class="alert-desc">本班次良品率 86.4%，低於基準 90%，建議確認品管站狀況。</div>
+      </div>
+      <div class="alert-actions">
+        <span class="typo-caption" style="color:var(--text-medium);white-space:nowrap">13:55:20</span>
+        <button class="btn btn-secondary-outlined" style="font-size:13px;height:32px">忽略</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── KPI Cards ── -->
+  <div class="kpi-grid">
+    <!-- 今日產出 -->
+    <div class="kpi-card">
+      <div class="kpi-label">今日產出 (件)</div>
+      <div class="kpi-value">4,821<span class="unit">/ 5,200</span></div>
+      <div class="kpi-footer">
+        <span class="trend-up">▲ 3.2%</span>
+        <span class="kpi-meta">較昨日同時段</span>
+      </div>
+      <div class="progress-wrap" style="margin-top:4px">
+        <div class="progress-meta">
+          <span class="progress-label">達成率</span>
+          <span class="progress-value">92.7%</span>
+        </div>
+        <div class="progress-track"><div class="progress-bar" style="width:92.7%"></div></div>
+      </div>
+    </div>
+    <!-- OEE -->
+    <div class="kpi-card success">
+      <div class="kpi-label">綜合效率 OEE</div>
+      <div class="kpi-value">82.4<span class="unit">%</span></div>
+      <div class="kpi-footer">
+        <span class="trend-up">▲ 1.8%</span>
+        <span class="kpi-meta">本週平均 80.2%</span>
+      </div>
+      <div class="progress-wrap" style="margin-top:4px">
+        <div class="progress-meta">
+          <span class="progress-label">目標 85%</span>
+          <span class="progress-value">82.4%</span>
+        </div>
+        <div class="progress-track"><div class="progress-bar success" style="width:82.4%"></div></div>
+      </div>
+    </div>
+    <!-- 良品率 -->
+    <div class="kpi-card warning">
+      <div class="kpi-label">良品率</div>
+      <div class="kpi-value">88.6<span class="unit">%</span></div>
+      <div class="kpi-footer">
+        <span class="trend-down">▼ 1.4%</span>
+        <span class="kpi-meta">目標 90%</span>
+      </div>
+      <div class="progress-wrap" style="margin-top:4px">
+        <div class="progress-meta">
+          <span class="progress-label">差距 −1.4%</span>
+          <span class="progress-value">88.6%</span>
+        </div>
+        <div class="progress-track"><div class="progress-bar warning" style="width:88.6%"></div></div>
+      </div>
+    </div>
+    <!-- 停機次數 -->
+    <div class="kpi-card error">
+      <div class="kpi-label">停機次數 (今日)</div>
+      <div class="kpi-value">3<span class="unit">次</span></div>
+      <div class="kpi-footer">
+        <span class="trend-down">▲ 2 次</span>
+        <span class="kpi-meta">較昨日 +2</span>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">
+        <span class="chip chip-s chip-error"><span class="chip-label">CNC-07</span></span>
+        <span class="chip chip-s chip-warning"><span class="chip-label">SMT-03</span></span>
+        <span class="chip chip-s chip-idle"><span class="chip-label">ASM-01</span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Main Content ── -->
+  <div class="two-col">
+
+    <!-- Left column -->
+    <div style="display:flex;flex-direction:column;gap:16px">
+
+      <!-- Machine Status Table -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-header-title">機台即時狀態</span>
+          <button class="btn btn-text" style="font-size:13px;height:28px;padding:4px 8px">查看全部 →</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>機台編號</th>
+                <th>機台名稱</th>
+                <th>狀態</th>
+                <th class="td-right">本班次產量</th>
+                <th class="td-right">良品率</th>
+                <th style="min-width:100px">稼動率</th>
+                <th>最後更新</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="td-mono">CNC-01</td>
+                <td>CNC 加工機 #1</td>
+                <td><span class="chip chip-processing"><span class="chip-label">運行中</span></span></td>
+                <td class="td-right">482</td>
+                <td class="td-right">94.2%</td>
+                <td>
+                  <div class="progress-wrap">
+                    <div class="progress-track"><div class="progress-bar" style="width:94%"></div></div>
+                    <div class="progress-meta"><span class="progress-value">94%</span></div>
+                  </div>
+                </td>
+                <td class="td-mono">14:32:01</td>
+              </tr>
+              <tr>
+                <td class="td-mono">CNC-03</td>
+                <td>CNC 加工機 #3</td>
+                <td><span class="chip chip-processing"><span class="chip-label">運行中</span></span></td>
+                <td class="td-right">461</td>
+                <td class="td-right">91.7%</td>
+                <td>
+                  <div class="progress-wrap">
+                    <div class="progress-track"><div class="progress-bar" style="width:91%"></div></div>
+                    <div class="progress-meta"><span class="progress-value">91%</span></div>
+                  </div>
+                </td>
+                <td class="td-mono">14:32:05</td>
+              </tr>
+              <tr>
+                <td class="td-mono">CNC-07</td>
+                <td>CNC 加工機 #7</td>
+                <td><span class="chip chip-error"><span class="chip-label">異常停機</span></span></td>
+                <td class="td-right">218</td>
+                <td class="td-right">87.3%</td>
+                <td>
+                  <div class="progress-wrap">
+                    <div class="progress-track"><div class="progress-bar error" style="width:42%"></div></div>
+                    <div class="progress-meta"><span class="progress-value" style="color:var(--status-error)">42%</span></div>
+                  </div>
+                </td>
+                <td class="td-mono">14:18:44</td>
+              </tr>
+              <tr>
+                <td class="td-mono">SMT-02</td>
+                <td>SMT 貼片機 #2</td>
+                <td><span class="chip chip-success"><span class="chip-label">正常</span></span></td>
+                <td class="td-right">1,204</td>
+                <td class="td-right">96.8%</td>
+                <td>
+                  <div class="progress-wrap">
+                    <div class="progress-track"><div class="progress-bar success" style="width:97%"></div></div>
+                    <div class="progress-meta"><span class="progress-value">97%</span></div>
+                  </div>
+                </td>
+                <td class="td-mono">14:32:07</td>
+              </tr>
+              <tr>
+                <td class="td-mono">SMT-03</td>
+                <td>SMT 貼片機 #3</td>
+                <td><span class="chip chip-warning"><span class="chip-label">效能不足</span></span></td>
+                <td class="td-right">876</td>
+                <td class="td-right">86.1%</td>
+                <td>
+                  <div class="progress-wrap">
+                    <div class="progress-track"><div class="progress-bar warning" style="width:76%"></div></div>
+                    <div class="progress-meta"><span class="progress-value" style="color:var(--status-warning)">76%</span></div>
+                  </div>
+                </td>
+                <td class="td-mono">14:31:58</td>
+              </tr>
+              <tr>
+                <td class="td-mono">ASM-01</td>
+                <td>組裝站 #1</td>
+                <td><span class="chip chip-idle"><span class="chip-label">待機</span></span></td>
+                <td class="td-right">324</td>
+                <td class="td-right">99.1%</td>
+                <td>
+                  <div class="progress-wrap">
+                    <div class="progress-track"><div class="progress-bar" style="width:55%"></div></div>
+                    <div class="progress-meta"><span class="progress-value">55%</span></div>
+                  </div>
+                </td>
+                <td class="td-mono">14:30:12</td>
+              </tr>
+              <tr>
+                <td class="td-mono">AOI-01</td>
+                <td>自動光學檢測</td>
+                <td><span class="chip chip-processing"><span class="chip-label">運行中</span></span></td>
+                <td class="td-right">3,241</td>
+                <td class="td-right">—</td>
+                <td>
+                  <div class="progress-wrap">
+                    <div class="progress-track"><div class="progress-bar success" style="width:98%"></div></div>
+                    <div class="progress-meta"><span class="progress-value">98%</span></div>
+                  </div>
+                </td>
+                <td class="td-mono">14:32:08</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Hourly Output Chart -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-header-title">每小時產出趨勢</span>
+          <div style="display:flex;gap:16px;align-items:center">
+            <span class="typo-caption" style="color:var(--text-medium);display:flex;align-items:center;gap:4px">
+              <span style="display:inline-block;width:10px;height:3px;background:var(--primary);border-radius:1.5px"></span>實際產出
+            </span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="bar-chart">
+            <div class="bar" style="height:72%" title="08:00｜520件"></div>
+            <div class="bar" style="height:85%" title="09:00｜618件"></div>
+            <div class="bar" style="height:90%" title="10:00｜654件"></div>
+            <div class="bar" style="height:88%" title="11:00｜640件"></div>
+            <div class="bar warn" style="height:70%" title="12:00｜508件（午休）"></div>
+            <div class="bar" style="height:73%" title="13:00｜530件"></div>
+            <div class="bar current" style="height:83%" title="14:00｜602件（進行中）"></div>
+          </div>
+          <div class="chart-x">
+            <span>08:00</span><span>09:00</span><span>10:00</span>
+            <span>11:00</span><span>12:00</span><span>13:00</span>
+            <span>14:00▸</span>
+          </div>
+          <hr class="divider" style="margin:12px 0 8px">
+          <div style="display:flex;gap:20px;font-size:12px;font-family:'Roboto';color:var(--text-medium)">
+            <span>最高 <b style="color:var(--text-high);font-weight:500">654</b> 件/時</span>
+            <span>最低 <b style="color:var(--text-high);font-weight:500">508</b> 件/時</span>
+            <span>本班均 <b style="color:var(--text-high);font-weight:500">582</b> 件/時</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right sidebar -->
+    <div style="display:flex;flex-direction:column;gap:16px">
+
+      <!-- OEE Donut -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-header-title">OEE 分解</span>
+        </div>
+        <div class="card-body">
+          <div class="donut-wrap">
+            <div class="donut">
+              <!-- r=34, circumference=2*pi*34≈213.6 -->
+              <svg width="88" height="88" viewBox="0 0 88 88">
+                <circle cx="44" cy="44" r="34" fill="none" stroke="var(--bg-container-high)" stroke-width="10"/>
+                <!-- 可用率 91.2%: 91.2/100*213.6=194.8 -->
+                <circle cx="44" cy="44" r="34" fill="none" stroke="var(--chart-1)" stroke-width="10"
+                  stroke-dasharray="194.8 18.8" stroke-linecap="round"/>
+                <!-- 效能率 93.8%: overlay smaller ring -->
+                <circle cx="44" cy="44" r="28" fill="none" stroke="var(--chart-3)" stroke-width="5"
+                  stroke-dasharray="165.1 14.9" stroke-linecap="round"/>
+              </svg>
+              <div class="donut-val">82.4<small>OEE</small></div>
+            </div>
+            <div class="legend">
+              <div class="legend-item">
+                <div class="legend-dot" style="background:var(--chart-1)"></div>
+                <span class="legend-name">可用率</span>
+                <span class="legend-val">91.2%</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-dot" style="background:var(--chart-3)"></div>
+                <span class="legend-name">效能率</span>
+                <span class="legend-val">93.8%</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-dot" style="background:var(--chart-2)"></div>
+                <span class="legend-name">良品率</span>
+                <span class="legend-val">88.6%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bullet Graph — Line Production vs Target -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-header-title">各產線達成率</span>
+        </div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:14px">
+          <!-- Line A -->
+          <div class="bullet-wrap">
+            <div style="display:flex;justify-content:space-between;margin-bottom:2px">
+              <span class="bullet-label">Line A</span>
+              <span class="chip chip-s chip-success"><span class="chip-label">達標</span></span>
+            </div>
+            <div class="bullet-track">
+              <div class="bullet-actual" style="width:92%;background:var(--status-success)"></div>
+              <div class="bullet-target" style="left:90%"></div>
+            </div>
+            <div class="bullet-vals"><span>實際 92%</span><span style="color:var(--text-medium)">目標 90%</span></div>
+          </div>
+          <!-- Line B -->
+          <div class="bullet-wrap">
+            <div style="display:flex;justify-content:space-between;margin-bottom:2px">
+              <span class="bullet-label">Line B</span>
+              <span class="chip chip-s chip-error"><span class="chip-label">未達標</span></span>
+            </div>
+            <div class="bullet-track">
+              <div class="bullet-actual" style="width:76%;background:var(--status-warning)"></div>
+              <div class="bullet-target" style="left:90%"></div>
+            </div>
+            <div class="bullet-vals"><span>實際 76%</span><span style="color:var(--status-error)">差距 −14%</span></div>
+          </div>
+          <!-- Line C -->
+          <div class="bullet-wrap">
+            <div style="display:flex;justify-content:space-between;margin-bottom:2px">
+              <span class="bullet-label">Line C</span>
+              <span class="chip chip-s chip-success"><span class="chip-label">達標</span></span>
+            </div>
+            <div class="bullet-track">
+              <div class="bullet-actual" style="width:97%;background:var(--status-success)"></div>
+              <div class="bullet-target" style="left:90%"></div>
+            </div>
+            <div class="bullet-vals"><span>實際 97%</span><span style="color:var(--status-medium)">目標 90%</span></div>
+          </div>
+          <!-- Line D -->
+          <div class="bullet-wrap">
+            <div style="display:flex;justify-content:space-between;margin-bottom:2px">
+              <span class="bullet-label">Line D</span>
+              <span class="chip chip-s chip-warning"><span class="chip-label">接近</span></span>
+            </div>
+            <div class="bullet-track">
+              <div class="bullet-actual" style="width:85%"></div>
+              <div class="bullet-target" style="left:90%"></div>
+            </div>
+            <div class="bullet-vals"><span>實際 85%</span><span style="color:var(--status-warning)">差距 −5%</span></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:11px;font-family:'Roboto';color:var(--text-medium)">
+            <div style="width:10px;height:2px;background:var(--text-high);border-radius:1px"></div>
+            <span>目標值</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Event Log -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-header-title">即時事件紀錄</span>
+          <button class="btn btn-text" style="font-size:13px;height:28px;padding:4px 8px">全部 →</button>
+        </div>
+        <div class="card-body" style="padding:0 16px">
+          <div class="event-list">
+            <div class="event-item">
+              <div class="event-dot-col">
+                <div class="event-dot" style="background:var(--status-error)"></div>
+                <div class="event-line"></div>
+              </div>
+              <div class="event-content">
+                <div class="event-msg">CNC-07 主軸過熱，自動停機</div>
+                <div class="event-meta">CNC-07 &nbsp;·&nbsp; 14:18</div>
+              </div>
+            </div>
+            <div class="event-item">
+              <div class="event-dot-col">
+                <div class="event-dot" style="background:var(--status-warning)"></div>
+                <div class="event-line"></div>
+              </div>
+              <div class="event-content">
+                <div class="event-msg">SMT-03 效能低於 80%，自動告警</div>
+                <div class="event-meta">SMT-03 &nbsp;·&nbsp; 13:55</div>
+              </div>
+            </div>
+            <div class="event-item">
+              <div class="event-dot-col">
+                <div class="event-dot" style="background:var(--status-success)"></div>
+                <div class="event-line"></div>
+              </div>
+              <div class="event-content">
+                <div class="event-msg">換線完成，Line C 恢復生產</div>
+                <div class="event-meta">Line C &nbsp;·&nbsp; 13:30</div>
+              </div>
+            </div>
+            <div class="event-item">
+              <div class="event-dot-col">
+                <div class="event-dot" style="background:var(--status-processing)"></div>
+                <div class="event-line"></div>
+              </div>
+              <div class="event-content">
+                <div class="event-msg">ASM-01 模具更換（計畫停機）</div>
+                <div class="event-meta">ASM-01 &nbsp;·&nbsp; 12:00</div>
+              </div>
+            </div>
+            <div class="event-item">
+              <div class="event-dot-col">
+                <div class="event-dot" style="background:var(--status-success)"></div>
+              </div>
+              <div class="event-content">
+                <div class="event-msg">早班交接完成，設備自檢通過</div>
+                <div class="event-meta">全線 &nbsp;·&nbsp; 08:00</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function updateClock() {
+    const now = new Date();
+    const p = n => String(n).padStart(2,'0');
+    document.getElementById('clock').textContent =
+      `${now.getFullYear()}-${p(now.getMonth()+1)}-${p(now.getDate())} \u00a0${p(now.getHours())}:${p(now.getMinutes())}:${p(now.getSeconds())}`;
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+</script>
+</body>
+</html>

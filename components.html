@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FAS Design Kit — Component Showcase</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+<style>
+/* ─────────────────────────────────────────
+   DESIGN TOKENS (from token.md)
+───────────────────────────────────────── */
+:root {
+  --delta-blue: #0087dc;
+  --primary: #00adef;
+  --secondary: #727171;
+
+  --status-processing: #00adef;
+  --status-success: #68ad23;
+  --status-warning: #f5b900;
+  --status-emergency: #f66d20;
+  --status-error: #f23a43;
+  --status-milestone: #8a74ad;
+  --status-idle: #808080;
+
+  --bg-surface: #ffffff;
+  --bg-surface-dim: #fafafa;
+  --bg-surface-dim-var: #f6f7f9;
+  --bg-container-low: #f3f3f3;
+  --bg-container-high: #ebebeb;
+
+  --elevation-02dp: #ffffff;
+  --elevation-08dp: #f5f5f5;
+
+  --text-white: #ffffff;
+  --text-black: #000000;
+  --text-high: #333333;
+  --text-body: #333333;
+  --text-medium: #727171;
+  --text-disabled: #bfbfbf;
+  --text-placeholder: #a6a6a6;
+
+  --comp-hover: #f0fbff;
+  --comp-hover-contained: #0088bd;
+  --comp-disabled-el: #bfbfbf;
+  --comp-disabled-con: #e6e6e6;
+  --comp-focus: rgba(0,173,239,0.12);
+
+  --chip-processing: #c2eeff;  --chip-text-processing: #00638a;
+  --chip-success: #e0fbc6;     --chip-text-success: #365912;
+  --chip-warning: #fff0c2;     --chip-text-warning: #5c4500;
+  --chip-emergency: #feece2;   --chip-text-emergency: #ac4207;
+  --chip-error: #fde2e4;       --chip-text-error: #bb0c15;
+  --chip-milestone: #ece9f2;   --chip-text-milestone: #594677;
+  --chip-idle: #ebebeb;        --chip-text-idle: #585858;
+  --chip-mariner: #dce8ff;     --chip-text-mariner: #1a3d7a;
+  --chip-moss: #e2f0d0;        --chip-text-moss: #2d4a10;
+  --chip-bronze: #f5e8d0;      --chip-text-bronze: #6b3a00;
+
+  --alert-bg-error: #fef1f1;      --alert-border-error: #fccacd;   --alert-text-error: #bb0c15;
+  --alert-bg-warning: #fffaeb;    --alert-border-warning: #fce8a0; --alert-text-warning: #5c4500;
+  --alert-bg-success: #effbe2;    --alert-border-success: #c6f0a0; --alert-text-success: #365912;
+  --alert-bg-processing: #f0fbff; --alert-border-processing: #a8e6ff; --alert-text-processing: #00638a;
+
+  --divider: #d9d9d9;
+  --card-outlined: #d9d9d9;
+  --switch-track-on: #81d7f5;
+  --switch-track-off: #b0b0b0;
+  --switch-thumb-on: #00adef;
+  --switch-thumb-off: #ffffff;
+  --scroll-bar: rgba(0,0,0,0.25);
+}
+
+/* ─────────────────────────────────────────
+   BASE
+───────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Noto Sans TC', 'Roboto', sans-serif;
+  background: var(--bg-surface-dim);
+  color: var(--text-body);
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-thumb { background: var(--scroll-bar); border-radius: 3px; }
+
+/* ─────────────────────────────────────────
+   TOP NAV
+───────────────────────────────────────── */
+.top-nav {
+  height: 56px;
+  background: var(--delta-blue);
+  display: flex; align-items: center;
+  padding: 0 32px; gap: 16px;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 1px 4px rgba(46,46,46,0.24);
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+  color: #fff;
+  font-family: 'Roboto'; font-weight: 700; font-size: 18px; letter-spacing: .5px;
+}
+.nav-logo svg { width: 28px; height: 28px; }
+.nav-sep { width: 1px; height: 20px; background: rgba(255,255,255,0.3); }
+.nav-title { color: rgba(255,255,255,0.85); font-family: 'Noto Sans TC'; font-size: 14px; }
+.nav-ver { margin-left: auto; color: rgba(255,255,255,0.6); font-size: 12px; font-family: 'Roboto'; }
+
+/* ─────────────────────────────────────────
+   LAYOUT
+───────────────────────────────────────── */
+.page { display: flex; min-height: calc(100vh - 56px); }
+
+/* Sidebar nav */
+.sidebar {
+  width: 220px; flex-shrink: 0;
+  background: var(--bg-surface);
+  border-right: 1px solid var(--divider);
+  padding: 16px 0;
+  position: sticky; top: 56px;
+  height: calc(100vh - 56px);
+  overflow-y: auto;
+}
+.sidebar-group { padding: 8px 16px 4px; font-size: 11px; font-weight: 600; color: var(--text-medium); letter-spacing: .8px; text-transform: uppercase; }
+.sidebar a {
+  display: block; padding: 6px 16px;
+  font-size: 13px; color: var(--text-high);
+  text-decoration: none; border-radius: 0;
+  transition: background .1s, color .1s;
+  border-left: 2px solid transparent;
+}
+.sidebar a:hover { background: var(--comp-hover); color: var(--primary); }
+.sidebar a.active { color: var(--primary); border-left-color: var(--primary); background: var(--comp-hover); font-weight: 500; }
+
+/* Main content */
+.main { flex: 1; padding: 32px; }
+
+/* Section */
+.section { margin-bottom: 48px; scroll-margin-top: 72px; }
+html { scroll-behavior: smooth; }
+.section-title {
+  font-family: 'Roboto'; font-weight: 700; font-size: 22px;
+  color: var(--text-high); margin-bottom: 4px;
+  padding-bottom: 12px; border-bottom: 2px solid var(--divider);
+}
+.section-desc { font-size: 13px; color: var(--text-medium); margin: 8px 0 20px; line-height: 1.6; }
+
+/* Sub-section */
+.subsection { margin-bottom: 28px; }
+.subsection-title { font-family: 'Roboto'; font-weight: 600; font-size: 14px; color: var(--text-medium); letter-spacing: .5px; text-transform: uppercase; margin-bottom: 12px; }
+
+/* Demo box */
+.demo-box {
+  background: var(--bg-surface);
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(46,46,46,0.08);
+  padding: 24px;
+  display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+}
+.demo-box.col { flex-direction: column; align-items: flex-start; }
+.demo-box.dark { background: #222; }
+.demo-label {
+  font-size: 11px; font-family: 'Roboto'; color: var(--text-medium);
+  margin-top: 16px; margin-bottom: 6px; letter-spacing: .3px;
+}
+.demo-label:first-child { margin-top: 0; }
+
+/* ─────────────────────────────────────────
+   BUTTON COMPONENT
+───────────────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  border-radius: 4px; cursor: pointer; border: none;
+  font-family: 'Roboto'; font-weight: 500; font-size: 14px; line-height: 20px;
+  white-space: nowrap; transition: background .15s, border-color .15s;
+  padding: 8px 25px;
+}
+/* Contained */
+.btn-contained { background: var(--primary); color: var(--text-white); border: 1px solid transparent; }
+.btn-contained:hover { background: var(--comp-hover-contained); }
+.btn-contained.err { background: var(--status-error); }
+.btn-contained.err:hover { background: #c82030; }
+/* Outlined */
+.btn-outlined { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
+.btn-outlined:hover { background: var(--comp-hover); }
+.btn-outlined.sec { border-color: var(--secondary); color: var(--secondary); }
+.btn-outlined.sec:hover { background: #f5f5f5; }
+.btn-outlined.err { border-color: var(--status-error); color: var(--status-error); }
+.btn-outlined.err:hover { background: #fef1f1; }
+/* Text */
+.btn-text { background: transparent; color: var(--primary); padding: 8px 8px; border: 1px solid transparent; }
+.btn-text:hover { background: var(--comp-hover); }
+.btn-text.sec { color: var(--secondary); }
+.btn-text.err { color: var(--status-error); }
+/* Disabled */
+.btn:disabled, .btn.dis { background: var(--comp-disabled-con) !important; color: var(--comp-disabled-el) !important; border-color: transparent !important; cursor: not-allowed; }
+.btn-outlined:disabled, .btn-outlined.dis { background: transparent !important; border-color: var(--comp-disabled-el) !important; }
+.btn-text:disabled, .btn-text.dis { background: transparent !important; }
+/* Sizes */
+.btn-xl { height: 48px; font-size: 16px; padding: 10px 28px; }
+.btn-l  { height: 44px; padding: 10px 24px; }
+.btn-m  { height: 40px; }
+.btn-s  { height: 36px; padding: 6px 16px; }
+.btn-xs { height: 32px; font-size: 13px; padding: 4px 12px; }
+/* Icon btn */
+.btn-icon { width: 36px; height: 36px; padding: 6px; border-radius: 50%; color: var(--secondary); background: transparent; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+.btn-icon:hover { background: var(--comp-hover); color: var(--primary); }
+.btn-icon.l { width: 44px; height: 44px; }
+/* FAB */
+.fab { width: 56px; height: 56px; border-radius: 50%; background: var(--primary); color: #fff; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 3px 8px rgba(0,0,0,0.2); }
+.fab:hover { background: var(--comp-hover-contained); }
+/* Fully rounded */
+.btn-rounded { border-radius: 99px; }
+
+/* ─────────────────────────────────────────
+   CHIP / STATUS CHIP
+───────────────────────────────────────── */
+.chip {
+  display: inline-flex; align-items: center;
+  height: 32px; border-radius: 16px; padding: 4px;
+}
+.chip-label {
+  font-family: 'Roboto'; font-weight: 400; font-size: 14px;
+  line-height: 20px; letter-spacing: 0.035px; padding: 0 8px; white-space: nowrap;
+}
+.chip-s { height: 24px; }
+.chip-rect { border-radius: 4px; }
+.chip-processing { background: var(--chip-processing); } .chip-processing .chip-label { color: var(--chip-text-processing); }
+.chip-success    { background: var(--chip-success); }    .chip-success .chip-label    { color: var(--chip-text-success); }
+.chip-warning    { background: var(--chip-warning); }    .chip-warning .chip-label    { color: var(--chip-text-warning); }
+.chip-emergency  { background: var(--chip-emergency); }  .chip-emergency .chip-label  { color: var(--chip-text-emergency); }
+.chip-error      { background: var(--chip-error); }      .chip-error .chip-label      { color: var(--chip-text-error); }
+.chip-milestone  { background: var(--chip-milestone); }  .chip-milestone .chip-label  { color: var(--chip-text-milestone); }
+.chip-idle       { background: var(--chip-idle); }       .chip-idle .chip-label       { color: var(--chip-text-idle); }
+.chip-mariner    { background: var(--chip-mariner); }    .chip-mariner .chip-label    { color: var(--chip-text-mariner); }
+.chip-moss       { background: var(--chip-moss); }       .chip-moss .chip-label       { color: var(--chip-text-moss); }
+.chip-bronze     { background: var(--chip-bronze); }     .chip-bronze .chip-label     { color: var(--chip-text-bronze); }
+/* Outlined chips */
+.chip-outlined { background: transparent; }
+.chip-outlined.chip-processing { border: 1px solid var(--chip-text-processing); } .chip-outlined.chip-processing .chip-label { color: var(--chip-text-processing); }
+.chip-outlined.chip-error      { border: 1px solid var(--chip-text-error); }      .chip-outlined.chip-error .chip-label      { color: var(--chip-text-error); }
+.chip-outlined.chip-success    { border: 1px solid var(--chip-text-success); }    .chip-outlined.chip-success .chip-label    { color: var(--chip-text-success); }
+.chip-outlined.chip-idle       { border: 1px solid var(--chip-text-idle); }       .chip-outlined.chip-idle .chip-label       { color: var(--chip-text-idle); }
+/* Removable */
+.chip-remove { font-size: 16px; color: inherit; opacity: .7; padding: 0 4px 0 0; cursor: pointer; line-height: 1; }
+/* Selectable */
+.chip-select { border: 1px solid var(--divider); background: transparent; }
+.chip-select.selected { background: var(--chip-processing); border-color: var(--primary); }
+.chip-select.selected .chip-label { color: var(--chip-text-processing); }
+.chip-select .chip-label { color: var(--text-medium); }
+
+/* ─────────────────────────────────────────
+   ALERT
+───────────────────────────────────────── */
+.alert {
+  display: flex; gap: 8px; align-items: flex-start;
+  border: 1px solid; border-radius: 4px;
+  padding: 10px 10px 10px 16px; width: 100%;
+}
+.alert-icon-wrap { padding-top: 6px; flex-shrink: 0; }
+.alert-icon-wrap svg { width: 24px; height: 24px; display: block; }
+.alert-body { flex: 1; min-width: 0; }
+.alert-title { font-family: 'Noto Sans TC'; font-weight: 500; font-size: 16px; line-height: 24px; }
+.alert-desc  { font-family: 'Noto Sans TC'; font-weight: 400; font-size: 14px; line-height: 20px; letter-spacing: 0.035px; padding-bottom: 4px; }
+.alert-actions { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+.alert-ts { font-family: 'Roboto'; font-size: 12px; color: var(--text-medium); white-space: nowrap; }
+.alert-close { background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 4px; }
+.alert-close svg { width: 20px; height: 20px; }
+
+.alert-error      { background: var(--alert-bg-error);      border-color: var(--alert-border-error); }
+.alert-error .alert-title, .alert-error .alert-desc { color: var(--alert-text-error); }
+.alert-error .alert-close svg path { stroke: var(--alert-text-error); }
+
+.alert-warning    { background: var(--alert-bg-warning);    border-color: var(--alert-border-warning); }
+.alert-warning .alert-title, .alert-warning .alert-desc { color: var(--alert-text-warning); }
+
+.alert-success    { background: var(--alert-bg-success);    border-color: var(--alert-border-success); }
+.alert-success .alert-title, .alert-success .alert-desc { color: var(--alert-text-success); }
+
+.alert-processing { background: var(--alert-bg-processing); border-color: var(--alert-border-processing); }
+.alert-processing .alert-title, .alert-processing .alert-desc { color: var(--alert-text-processing); }
+
+/* Banner alert */
+.alert-banner {
+  border-radius: 0;
+  padding: 10px 16px 10px 16px;
+}
+
+/* ─────────────────────────────────────────
+   CARD
+───────────────────────────────────────── */
+.card {
+  background: var(--elevation-02dp);
+  border-radius: 4px;
+  box-shadow: 0 1px 4px 0 rgba(46,46,46,0.12),
+              inset 0 0 2px 0 rgba(255,255,255,0.12);
+  overflow: hidden;
+}
+.card.outlined {
+  box-shadow: none;
+  border: 1px solid var(--card-outlined);
+}
+.card-header {
+  background: var(--bg-container-high);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 6px 16px; min-height: 36px;
+}
+.card-header.no-bg { background: transparent; }
+.card-header-title {
+  font-family: 'Roboto'; font-weight: 500; font-size: 16px; line-height: 24px;
+  letter-spacing: 0.08px; color: var(--text-high);
+}
+.card-body { padding: 16px; }
+.card-actions { padding: 8px 16px 16px; display: flex; justify-content: flex-end; gap: 8px; }
+
+/* ─────────────────────────────────────────
+   BADGE
+───────────────────────────────────────── */
+.badge-wrap { position: relative; display: inline-flex; }
+.badge {
+  position: absolute; top: -6px; right: -8px;
+  background: var(--primary); color: #fff;
+  font-family: 'Roboto'; font-size: 10px; font-weight: 700;
+  height: 18px; min-width: 18px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 4px; line-height: 1;
+}
+.badge.dot { width: 10px; height: 10px; min-width: 0; padding: 0; border-radius: 50%; top: -2px; right: -2px; }
+.badge.alert { background: var(--status-error); }
+
+/* ─────────────────────────────────────────
+   AVATAR
+───────────────────────────────────────── */
+.avatar {
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 50%; font-family: 'Roboto'; font-weight: 500; color: #fff;
+  flex-shrink: 0;
+}
+.avatar-l { width: 48px; height: 48px; font-size: 18px; }
+.avatar-m { width: 36px; height: 36px; font-size: 14px; }
+.avatar-s { width: 24px; height: 24px; font-size: 11px; }
+.avatar-primary { background: var(--primary); }
+.avatar-secondary { background: var(--bg-container-high); color: var(--secondary); }
+
+/* ─────────────────────────────────────────
+   DIVIDER
+───────────────────────────────────────── */
+.divider-h { width: 100%; height: 1px; background: var(--divider); }
+.divider-v { width: 1px; height: 32px; background: var(--divider); display: inline-block; }
+
+/* ─────────────────────────────────────────
+   PROGRESS
+───────────────────────────────────────── */
+.progress-wrap { display: flex; flex-direction: column; gap: 4px; width: 100%; }
+.progress-meta { display: flex; justify-content: space-between; font-family: 'Roboto'; font-size: 12px; }
+.progress-meta .lbl { color: var(--text-medium); }
+.progress-meta .val { color: var(--text-high); font-weight: 500; }
+.progress-track { height: 8px; background: var(--bg-container-high); border-radius: 4px; overflow: hidden; }
+.progress-bar { height: 100%; border-radius: 4px; background: var(--primary); }
+.progress-bar.success { background: var(--status-success); }
+.progress-bar.warning { background: var(--status-warning); }
+.progress-bar.error   { background: var(--status-error); }
+/* Circular */
+.progress-circular { position: relative; width: 48px; height: 48px; }
+.progress-circular svg { transform: rotate(-90deg); }
+.progress-circular .val { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'Roboto'; font-size: 11px; font-weight: 500; color: var(--text-high); }
+/* Bullet graph */
+.bullet-track { height: 8px; background: var(--bg-container-high); border-radius: 2px; position: relative; overflow: visible; width: 100%; }
+.bullet-actual { height: 100%; border-radius: 2px; }
+.bullet-target { position: absolute; top: -4px; bottom: -4px; width: 2px; background: var(--text-high); }
+
+/* ─────────────────────────────────────────
+   SELECTION CONTROLS
+───────────────────────────────────────── */
+/* Checkbox */
+.checkbox-wrap { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
+.checkbox {
+  width: 18px; height: 18px; border-radius: 2px; border: 2px solid var(--secondary);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  transition: all .15s;
+}
+.checkbox.checked { background: var(--primary); border-color: var(--primary); }
+.checkbox.checked svg { display: block; }
+.checkbox svg { display: none; width: 12px; height: 12px; }
+.checkbox.indeterminate { background: var(--primary); border-color: var(--primary); }
+.checkbox.disabled { background: var(--comp-disabled-con); border-color: var(--comp-disabled-el); cursor: not-allowed; }
+.ctrl-label { font-family: 'Noto Sans TC'; font-size: 14px; color: var(--text-high); }
+.ctrl-label.disabled { color: var(--comp-disabled-el); }
+
+/* Radio */
+.radio {
+  width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--secondary);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.radio.selected { border-color: var(--primary); }
+.radio.selected::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--primary); }
+.radio.disabled { border-color: var(--comp-disabled-el); cursor: not-allowed; }
+
+/* Switch */
+.switch-wrap { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
+.switch { width: 36px; height: 20px; border-radius: 10px; background: var(--switch-track-off); position: relative; transition: background .2s; }
+.switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.3); transition: left .2s; }
+.switch.on { background: var(--primary); }
+.switch.on::after { left: 18px; }
+.switch.disabled { background: var(--comp-disabled-con); }
+.switch.disabled::after { background: var(--comp-disabled-el); }
+
+/* ─────────────────────────────────────────
+   HYPERLINK
+───────────────────────────────────────── */
+.link { color: var(--primary); text-decoration: underline; cursor: pointer; font-size: 14px; }
+.link:hover { color: var(--comp-hover-contained); }
+.link.secondary { color: var(--secondary); }
+
+/* ─────────────────────────────────────────
+   TEXT FIELD
+───────────────────────────────────────── */
+.textfield-wrap { display: flex; flex-direction: column; gap: 4px; }
+.textfield-label { font-family: 'Noto Sans TC'; font-size: 12px; color: var(--text-medium); }
+.textfield {
+  border: 1px solid var(--secondary); border-radius: 4px;
+  padding: 0 12px; height: 40px; font-size: 14px; font-family: 'Noto Sans TC';
+  color: var(--text-high); background: var(--bg-surface); outline: none;
+  transition: border-color .15s;
+  display: flex; align-items: center; gap: 8px;
+}
+.textfield input { border: none; outline: none; flex: 1; font-size: 14px; font-family: 'Noto Sans TC'; background: transparent; color: var(--text-high); }
+.textfield:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px var(--comp-focus); }
+.textfield.error { border-color: var(--status-error); }
+.textfield.disabled { background: var(--comp-disabled-con); border-color: var(--comp-disabled-el); cursor: not-allowed; }
+.textfield-helper { font-size: 12px; color: var(--text-medium); font-family: 'Roboto'; }
+.textfield-helper.error { color: var(--status-error); }
+
+/* ─────────────────────────────────────────
+   TOOLTIP
+───────────────────────────────────────── */
+.tooltip-wrap { position: relative; display: inline-flex; cursor: pointer; }
+.tooltip-box {
+  position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%);
+  background: #333; color: #fff; font-family: 'Roboto'; font-size: 12px; line-height: 18px;
+  padding: 4px 8px; border-radius: 4px; white-space: nowrap; pointer-events: none;
+  opacity: 0; transition: opacity .15s;
+}
+.tooltip-wrap:hover .tooltip-box { opacity: 1; }
+
+/* ─────────────────────────────────────────
+   DIALOG PREVIEW
+───────────────────────────────────────── */
+.dialog-preview {
+  background: var(--bg-surface);
+  border-radius: 4px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  width: 480px; max-width: 100%;
+  overflow: hidden;
+}
+.dialog-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--divider); }
+.dialog-title { font-family: 'Noto Sans TC'; font-weight: 500; font-size: 18px; color: var(--text-high); }
+.dialog-body { padding: 20px; font-size: 14px; color: var(--text-body); line-height: 1.6; }
+.dialog-footer { display: flex; justify-content: flex-end; gap: 8px; padding: 12px 20px; border-top: 1px solid var(--divider); }
+
+/* ─────────────────────────────────────────
+   TAB
+───────────────────────────────────────── */
+.tab-bar { display: flex; border-bottom: 1px solid var(--divider); background: var(--bg-surface); }
+.tab-item {
+  padding: 10px 20px; font-size: 14px; font-family: 'Roboto'; font-weight: 500;
+  color: var(--text-medium); cursor: pointer; position: relative;
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+  transition: color .15s;
+}
+.tab-item:hover { color: var(--primary); background: var(--comp-hover); }
+.tab-item.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+/* ─────────────────────────────────────────
+   STEPPER
+───────────────────────────────────────── */
+.stepper { display: flex; align-items: center; gap: 0; }
+.step { display: flex; align-items: center; }
+.step-circle {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Roboto'; font-size: 13px; font-weight: 500;
+  background: var(--bg-container-high); color: var(--text-medium);
+}
+.step-circle.active { background: var(--primary); color: #fff; }
+.step-circle.done { background: var(--status-success); color: #fff; }
+.step-label { font-size: 12px; color: var(--text-medium); margin-left: 8px; white-space: nowrap; }
+.step-label.active { color: var(--primary); font-weight: 500; }
+.step-connector { width: 40px; height: 2px; background: var(--divider); margin: 0 4px; }
+.step-connector.done { background: var(--status-success); }
+
+/* ─────────────────────────────────────────
+   TYPOGRAPHY
+───────────────────────────────────────── */
+.typo-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.typo-table th { text-align: left; padding: 8px 12px; background: var(--bg-surface-dim-var); font-weight: 600; color: var(--text-high); border-bottom: 1px solid var(--divider); }
+.typo-table td { padding: 10px 12px; border-bottom: 1px solid var(--divider); color: var(--text-body); vertical-align: middle; }
+
+/* ─────────────────────────────────────────
+   MISC
+───────────────────────────────────────── */
+.row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.col-demo { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+.material-icons { font-size: 20px !important; }
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="top-nav">
+  <div class="nav-logo">
+    <svg viewBox="0 0 28 28" fill="none">
+      <rect width="28" height="28" rx="4" fill="white" fill-opacity=".15"/>
+      <path d="M6 14L14 6L22 14L14 22L6 14Z" fill="white"/>
+      <path d="M14 10L18 14L14 18L10 14L14 10Z" fill="#0087dc"/>
+    </svg>
+    Delta FAS
+  </div>
+  <div class="nav-sep"></div>
+  <span class="nav-title">Design System · Component Showcase</span>
+  <span class="nav-ver">Web Design Kit Beta</span>
+</nav>
+
+<div class="page">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-group">基礎元件</div>
+    <a href="#button" class="active">Button</a>
+    <a href="#chip">Chip / Status Chip</a>
+    <a href="#badge">Badge</a>
+    <a href="#avatar">Avatar</a>
+    <a href="#divider">Divider</a>
+    <a href="#hyperlink">Hyperlink</a>
+    <div class="sidebar-group">回饋元件</div>
+    <a href="#alert">Alert</a>
+    <a href="#progress">Progress</a>
+    <a href="#tooltip">Tooltip</a>
+    <div class="sidebar-group">輸入元件</div>
+    <a href="#selection">Selection Controls</a>
+    <a href="#textfield">Text Field</a>
+    <div class="sidebar-group">容器元件</div>
+    <a href="#card">Card</a>
+    <a href="#dialog">Dialog</a>
+    <a href="#tab">Tab</a>
+    <a href="#stepper">Stepper</a>
+    <div class="sidebar-group">全局樣式</div>
+    <a href="#typography">Typography</a>
+    <a href="#color">Color Tokens</a>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- ── BUTTON ── -->
+    <section class="section" id="button">
+      <div class="section-title">Button</div>
+      <div class="section-desc">按鈕用來讓使用者呼叫行動或做出選擇。提供三種 Style（Contained / Outlined / Text）× 三種 Color（Primary / Secondary / Error）× 五種 Size（XL～XS）× 三種 State（Default / Hover / Disabled）。</div>
+
+      <div class="subsection">
+        <div class="subsection-title">Style × Color</div>
+        <div class="demo-box col">
+          <div class="demo-label">Contained — Primary / Error</div>
+          <div class="row">
+            <button class="btn btn-contained btn-m">Contained</button>
+            <button class="btn btn-contained btn-m err">Contained Error</button>
+            <button class="btn btn-contained btn-m dis" disabled>Disabled</button>
+          </div>
+          <div class="demo-label">Outlined — Primary / Secondary / Error</div>
+          <div class="row">
+            <button class="btn btn-outlined btn-m">Outlined</button>
+            <button class="btn btn-outlined btn-m sec">Secondary</button>
+            <button class="btn btn-outlined btn-m err">Error</button>
+            <button class="btn btn-outlined btn-m dis" disabled>Disabled</button>
+          </div>
+          <div class="demo-label">Text — Primary / Secondary / Error</div>
+          <div class="row">
+            <button class="btn btn-text btn-m">Text</button>
+            <button class="btn btn-text btn-m sec">Secondary</button>
+            <button class="btn btn-text btn-m err">Error</button>
+            <button class="btn btn-text btn-m dis" disabled>Disabled</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title">Size（XL 48 → XS 32）</div>
+        <div class="demo-box" style="align-items:flex-end">
+          <button class="btn btn-contained btn-xl">XL 48</button>
+          <button class="btn btn-contained btn-l">L 44</button>
+          <button class="btn btn-contained btn-m">M 40</button>
+          <button class="btn btn-contained btn-s">S 36</button>
+          <button class="btn btn-contained btn-xs">XS 32</button>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title">With Icon</div>
+        <div class="demo-box">
+          <button class="btn btn-contained btn-m">
+            <span class="material-icons">add</span>新增
+          </button>
+          <button class="btn btn-outlined btn-m">
+            匯出<span class="material-icons">download</span>
+          </button>
+          <button class="btn btn-text btn-m">
+            <span class="material-icons">filter_list</span>篩選
+          </button>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title">Icon Button（L 36 / M 24 / S 20）</div>
+        <div class="demo-box" style="align-items:center">
+          <button class="btn-icon l"><span class="material-icons" style="font-size:24px!important">edit</span></button>
+          <button class="btn-icon"><span class="material-icons">delete_outline</span></button>
+          <button class="btn-icon"><span class="material-icons">more_vert</span></button>
+          <button class="btn-icon" style="color:var(--primary)"><span class="material-icons">refresh</span></button>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title">FAB / Fully Rounded</div>
+        <div class="demo-box">
+          <button class="fab"><span class="material-icons" style="font-size:28px!important">add</span></button>
+          <button class="btn btn-contained btn-m btn-rounded">Rounded</button>
+          <button class="btn btn-outlined btn-m btn-rounded">Rounded</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CHIP ── -->
+    <section class="section" id="chip">
+      <div class="section-title">Chip / Status Chip</div>
+      <div class="section-desc">標籤提供 Round 和 Rectangle 兩種外型，Filled 或 Outline 樣式，L（32px）和 S（24px）兩種尺寸。Status Chip 共 21 種狀態色。</div>
+
+      <div class="subsection">
+        <div class="subsection-title">Status Chip — Round Filled（常用狀態）</div>
+        <div class="demo-box col">
+          <div class="row">
+            <span class="chip chip-processing"><span class="chip-label">Processing</span></span>
+            <span class="chip chip-success"><span class="chip-label">Success</span></span>
+            <span class="chip chip-warning"><span class="chip-label">Warning</span></span>
+            <span class="chip chip-emergency"><span class="chip-label">Emergency</span></span>
+            <span class="chip chip-error"><span class="chip-label">Error</span></span>
+            <span class="chip chip-milestone"><span class="chip-label">Milestone</span></span>
+            <span class="chip chip-idle"><span class="chip-label">Idle</span></span>
+          </div>
+          <div class="row">
+            <span class="chip chip-mariner"><span class="chip-label">Mariner</span></span>
+            <span class="chip chip-moss"><span class="chip-label">Moss</span></span>
+            <span class="chip chip-bronze"><span class="chip-label">Bronze</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title">Size L（32px）vs S（24px）</div>
+        <div class="demo-box">
+          <span class="chip chip-processing"><span class="chip-label">L 32px</span></span>
+          <span class="chip chip-s chip-processing"><span class="chip-label">S 24px</span></span>
+          <span class="chip chip-success"><span class="chip-label">L 32px</span></span>
+          <span class="chip chip-s chip-success"><span class="chip-label">S 24px</span></span>
+          <span class="chip chip-error"><span class="chip-label">L 32px</span></span>
+          <span class="chip chip-s chip-error"><span class="chip-label">S 24px</span></span>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title">Outlined Style</div>
+        <div class="demo-box">
+          <span class="chip chip-outlined chip-processing"><span class="chip-label">Processing</span></span>
+          <span class="chip chip-outlined chip-error"><span class="chip-label">Error</span></span>
+          <span class="chip chip-outlined chip-success"><span class="chip-label">Success</span></span>
+          <span class="chip chip-outlined chip-idle"><span class="chip-label">Idle</span></span>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title">Rectangle Shape</div>
+        <div class="demo-box">
+          <span class="chip chip-rect chip-processing"><span class="chip-label">Rectangle</span></span>
+          <span class="chip chip-rect chip-success"><span class="chip-label">Success</span></span>
+          <span class="chip chip-rect chip-error"><span class="chip-label">Error</span></span>
+          <span class="chip chip-rect chip-idle"><span class="chip-label">Idle</span></span>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title">Removable Chip</div>
+        <div class="demo-box">
+          <span class="chip chip-processing">
+            <span class="chip-label">taipei</span>
+            <span class="chip-remove" style="color:var(--chip-text-processing)">×</span>
+          </span>
+          <span class="chip chip-success">
+            <span class="chip-label">Line A</span>
+            <span class="chip-remove" style="color:var(--chip-text-success)">×</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title">Selectable Chip</div>
+        <div class="demo-box">
+          <span class="chip chip-select selected"><span class="chip-label">全部</span></span>
+          <span class="chip chip-select"><span class="chip-label">今日</span></span>
+          <span class="chip chip-select"><span class="chip-label">本週</span></span>
+          <span class="chip chip-select"><span class="chip-label">本月</span></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── BADGE ── -->
+    <section class="section" id="badge">
+      <div class="section-title">Badge</div>
+      <div class="section-desc">用於圖標或元件右上角，顯示數字或狀態點。</div>
+      <div class="demo-box">
+        <div class="badge-wrap">
+          <button class="btn-icon"><span class="material-icons">notifications</span></button>
+          <span class="badge">3</span>
+        </div>
+        <div class="badge-wrap">
+          <button class="btn-icon"><span class="material-icons">mail</span></button>
+          <span class="badge">12</span>
+        </div>
+        <div class="badge-wrap">
+          <button class="btn-icon"><span class="material-icons">warning</span></button>
+          <span class="badge alert">!</span>
+        </div>
+        <div class="badge-wrap">
+          <button class="btn-icon"><span class="material-icons">settings</span></button>
+          <span class="badge dot"></span>
+        </div>
+        <div class="badge-wrap">
+          <button class="btn-icon"><span class="material-icons">bug_report</span></button>
+          <span class="badge dot alert"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── AVATAR ── -->
+    <section class="section" id="avatar">
+      <div class="section-title">Avatar</div>
+      <div class="section-desc">用於顯示使用者識別。提供 Primary（品牌色）、Secondary（容器色）和 Photo 三種類型，L / M / S 三種尺寸。</div>
+      <div class="demo-box">
+        <div class="avatar avatar-l avatar-primary">YC</div>
+        <div class="avatar avatar-m avatar-primary">YC</div>
+        <div class="avatar avatar-s avatar-primary">YC</div>
+        <div class="divider-v"></div>
+        <div class="avatar avatar-l avatar-secondary"><span class="material-icons" style="font-size:22px!important">person</span></div>
+        <div class="avatar avatar-m avatar-secondary"><span class="material-icons" style="font-size:18px!important">person</span></div>
+        <div class="avatar avatar-s avatar-secondary"><span class="material-icons" style="font-size:14px!important">person</span></div>
+      </div>
+    </section>
+
+    <!-- ── DIVIDER ── -->
+    <section class="section" id="divider">
+      <div class="section-title">Divider</div>
+      <div class="section-desc">用於視覺分隔，提供水平（Horizontal）和垂直（Vertical）兩種方向。</div>
+      <div class="demo-box col">
+        <div class="demo-label">Horizontal</div>
+        <div class="divider-h"></div>
+        <div class="demo-label">Vertical（inline）</div>
+        <div class="row" style="align-items:center">
+          <span style="font-size:13px;color:var(--text-medium)">項目 A</span>
+          <div class="divider-v"></div>
+          <span style="font-size:13px;color:var(--text-medium)">項目 B</span>
+          <div class="divider-v"></div>
+          <span style="font-size:13px;color:var(--text-medium)">項目 C</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── HYPERLINK ── -->
+    <section class="section" id="hyperlink">
+      <div class="section-title">Hyperlink</div>
+      <div class="section-desc">提供 Primary（品牌色）和 Secondary（灰色）兩種類型。</div>
+      <div class="demo-box">
+        <a class="link">Primary Hyperlink</a>
+        <a class="link secondary">Secondary Hyperlink</a>
+      </div>
+    </section>
+
+    <!-- ── ALERT ── -->
+    <section class="section" id="alert">
+      <div class="section-title">Alert</div>
+      <div class="section-desc">Alert 分為 <b>Inline 行內通知</b>（四邊完整 border，置於內容區塊中）和 <b>Banner 頁面橫幅</b>（置於頁面頂部）。提供 Error / Warning / Success / Processing 四種狀態。</div>
+
+      <div class="subsection">
+        <div class="subsection-title">Inline Alert</div>
+        <div class="demo-box col">
+          <div class="alert alert-error">
+            <span class="alert-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#f23a43"/><path d="M15 9L9 15M9 9l6 6" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </span>
+            <div class="alert-body">
+              <div class="alert-title">Error — 標題文字</div>
+              <div class="alert-desc">說明文字，提供使用者操作反饋或警示資訊。</div>
+            </div>
+            <div class="alert-actions">
+              <span class="alert-ts">14:18:44</span>
+              <button class="btn btn-outlined btn-s sec">回復</button>
+              <button class="alert-close"><svg viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="var(--alert-text-error)" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+            </div>
+          </div>
+          <div class="alert alert-warning">
+            <span class="alert-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M12 2L22 21H2L12 2Z" fill="#f5b900"/><path d="M12 9v5M12 17h.01" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </span>
+            <div class="alert-body">
+              <div class="alert-title">Warning — 標題文字</div>
+              <div class="alert-desc">說明文字，提供使用者操作反饋或警示資訊。</div>
+            </div>
+            <div class="alert-actions">
+              <button class="btn btn-outlined btn-s sec">忽略</button>
+            </div>
+          </div>
+          <div class="alert alert-success">
+            <span class="alert-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#68ad23"/><path d="M8 12l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <div class="alert-body">
+              <div class="alert-title">Success — 標題文字</div>
+              <div class="alert-desc">說明文字，操作已成功完成。</div>
+            </div>
+          </div>
+          <div class="alert alert-processing">
+            <span class="alert-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#00adef"/><path d="M12 8v4l2 2" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </span>
+            <div class="alert-body">
+              <div class="alert-title">Processing — 標題文字</div>
+              <div class="alert-desc">說明文字，提示使用者目前系統正在處理中。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title">Banner Alert（頁面橫幅）</div>
+        <div class="demo-box col" style="padding:0;gap:0;overflow:hidden">
+          <div class="alert alert-banner alert-error" style="border-radius:0;border-left:none;border-right:none;border-top:none">
+            <span class="alert-icon-wrap"><svg viewBox="0 0 24 24" fill="none" width="24" height="24"><circle cx="12" cy="12" r="10" fill="#f23a43"/><path d="M15 9L9 15M9 9l6 6" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+            <div class="alert-body"><div class="alert-title" style="font-size:14px">系統偵測到嚴重錯誤，請聯繫系統管理員。</div></div>
+            <div class="alert-actions"><button class="btn btn-outlined btn-s sec">查看詳情</button></div>
+          </div>
+          <div class="alert alert-banner alert-processing" style="border-radius:0;border-left:none;border-right:none;border-top:none">
+            <span class="alert-icon-wrap"><svg viewBox="0 0 24 24" fill="none" width="24" height="24"><path d="M12 4a8 8 0 1 1 0 16A8 8 0 0 1 12 4zm0 0v4m0 4h.01" stroke="#00638a" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+            <div class="alert-body"><div class="alert-title" style="font-size:14px">🔔 系統已更新至 v1.2.0，包含功能優化與錯誤修正。</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── PROGRESS ── -->
+    <section class="section" id="progress">
+      <div class="section-title">Progress</div>
+      <div class="section-desc">提供 Linear（線性）和 Circular（環形）進度條，以及 Dashboard 專用的 Bullet Graph。</div>
+
+      <div class="subsection">
+        <div class="subsection-title">Linear Progress</div>
+        <div class="demo-box col">
+          <div class="progress-wrap">
+            <div class="progress-meta"><span class="lbl">進度</span><span class="val">72%</span></div>
+            <div class="progress-track"><div class="progress-bar" style="width:72%"></div></div>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-meta"><span class="lbl">良品率（Success）</span><span class="val">96%</span></div>
+            <div class="progress-track"><div class="progress-bar success" style="width:96%"></div></div>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-meta"><span class="lbl">稼動率（Warning）</span><span class="val">68%</span></div>
+            <div class="progress-track"><div class="progress-bar warning" style="width:68%"></div></div>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-meta"><span class="lbl">異常停機（Error）</span><span class="val">34%</span></div>
+            <div class="progress-track"><div class="progress-bar error" style="width:34%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title">Circular Progress</div>
+        <div class="demo-box">
+          <div class="progress-circular">
+            <svg width="48" height="48" viewBox="0 0 48 48">
+              <circle cx="24" cy="24" r="20" fill="none" stroke="var(--bg-container-high)" stroke-width="4"/>
+              <circle cx="24" cy="24" r="20" fill="none" stroke="var(--primary)" stroke-width="4"
+                stroke-dasharray="100.5 25.6" stroke-linecap="round"/>
+            </svg>
+            <div class="val">80%</div>
+          </div>
+          <div class="progress-circular">
+            <svg width="48" height="48" viewBox="0 0 48 48">
+              <circle cx="24" cy="24" r="20" fill="none" stroke="var(--bg-container-high)" stroke-width="4"/>
+              <circle cx="24" cy="24" r="20" fill="none" stroke="var(--status-success)" stroke-width="4"
+                stroke-dasharray="120.5 5.6" stroke-linecap="round"/>
+            </svg>
+            <div class="val">95%</div>
+          </div>
+          <div class="progress-circular">
+            <svg width="48" height="48" viewBox="0 0 48 48">
+              <circle cx="24" cy="24" r="20" fill="none" stroke="var(--bg-container-high)" stroke-width="4"/>
+              <circle cx="24" cy="24" r="20" fill="none" stroke="var(--status-warning)" stroke-width="4"
+                stroke-dasharray="75.4 50.3" stroke-linecap="round"/>
+            </svg>
+            <div class="val">60%</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title">Bullet Graph（Dashboard 專用）</div>
+        <div class="demo-box col">
+          <div style="display:flex;flex-direction:column;gap:12px;width:400px">
+            <div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:12px;font-family:'Roboto';color:var(--text-medium)"><span>Line A</span><span>92% / 90%</span></div>
+              <div class="bullet-track"><div class="bullet-actual" style="width:92%;background:var(--status-success)"></div><div class="bullet-target" style="left:90%"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:12px;font-family:'Roboto';color:var(--text-medium)"><span>Line B</span><span>76% / 90%</span></div>
+              <div class="bullet-track"><div class="bullet-actual" style="width:76%;background:var(--status-warning)"></div><div class="bullet-target" style="left:90%"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:12px;font-family:'Roboto';color:var(--text-medium)"><span>Line C</span><span>97% / 90%</span></div>
+              <div class="bullet-track"><div class="bullet-actual" style="width:97%;background:var(--status-success)"></div><div class="bullet-target" style="left:90%"></div></div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--text-medium);font-family:'Roboto';display:flex;align-items:center;gap:6px;margin-top:4px">
+            <div style="width:10px;height:2px;background:var(--text-high);border-radius:1px"></div>目標值
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── TOOLTIP ── -->
+    <section class="section" id="tooltip">
+      <div class="section-title">Tooltip</div>
+      <div class="section-desc">滑鼠懸停時顯示輔助說明文字。</div>
+      <div class="demo-box">
+        <div class="tooltip-wrap">
+          <button class="btn btn-outlined btn-m">Hover me</button>
+          <div class="tooltip-box">這是 Tooltip 說明文字</div>
+        </div>
+        <div class="tooltip-wrap">
+          <button class="btn-icon"><span class="material-icons">help_outline</span></button>
+          <div class="tooltip-box">查看更多說明</div>
+        </div>
+        <div class="tooltip-wrap">
+          <span class="chip chip-error chip-s"><span class="chip-label">異常</span></span>
+          <div class="tooltip-box">主軸溫度超過 85°C</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SELECTION CONTROLS ── -->
+    <section class="section" id="selection">
+      <div class="section-title">Selection Controls</div>
+      <div class="section-desc">包含 Checkbox、Radio 和 Switch，提供 Enabled 和 Disabled 兩種狀態。</div>
+
+      <div class="subsection">
+        <div class="subsection-title">Checkbox</div>
+        <div class="demo-box">
+          <label class="checkbox-wrap">
+            <div class="checkbox checked"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <span class="ctrl-label">Selected</span>
+          </label>
+          <label class="checkbox-wrap">
+            <div class="checkbox indeterminate"><div style="width:8px;height:2px;background:white;border-radius:1px"></div></div>
+            <span class="ctrl-label">Indeterminate</span>
+          </label>
+          <label class="checkbox-wrap">
+            <div class="checkbox"></div>
+            <span class="ctrl-label">Unselected</span>
+          </label>
+          <label class="checkbox-wrap">
+            <div class="checkbox disabled"></div>
+            <span class="ctrl-label disabled">Disabled</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title">Radio</div>
+        <div class="demo-box">
+          <label class="checkbox-wrap">
+            <div class="radio selected"></div>
+            <span class="ctrl-label">選項 A（已選取）</span>
+          </label>
+          <label class="checkbox-wrap">
+            <div class="radio"></div>
+            <span class="ctrl-label">選項 B</span>
+          </label>
+          <label class="checkbox-wrap">
+            <div class="radio disabled"></div>
+            <span class="ctrl-label disabled">選項 C（停用）</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title">Switch</div>
+        <div class="demo-box">
+          <label class="switch-wrap">
+            <div class="switch on"></div>
+            <span class="ctrl-label">開啟</span>
+          </label>
+          <label class="switch-wrap">
+            <div class="switch"></div>
+            <span class="ctrl-label">關閉</span>
+          </label>
+          <label class="switch-wrap">
+            <div class="switch disabled"></div>
+            <span class="ctrl-label disabled">停用</span>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── TEXT FIELD ── -->
+    <section class="section" id="textfield">
+      <div class="section-title">Text Field</div>
+      <div class="section-desc">提供 Outlined / Underline / Borderless 三種樣式，以及 Empty / Focus / Filled / Error / Disabled 等狀態，尺寸 XL～XS。</div>
+      <div class="demo-box" style="gap:16px;flex-wrap:wrap">
+        <div class="textfield-wrap" style="width:200px">
+          <label class="textfield-label">標籤名稱</label>
+          <div class="textfield"><input placeholder="輸入內容…" /></div>
+        </div>
+        <div class="textfield-wrap" style="width:200px">
+          <label class="textfield-label">Focus 狀態</label>
+          <div class="textfield" style="border-color:var(--primary);box-shadow:0 0 0 3px var(--comp-focus)">
+            <input value="已輸入文字" />
+          </div>
+        </div>
+        <div class="textfield-wrap" style="width:200px">
+          <label class="textfield-label" style="color:var(--status-error)">Error 狀態</label>
+          <div class="textfield error"><input value="錯誤輸入" /></div>
+          <span class="textfield-helper error">請輸入有效的格式</span>
+        </div>
+        <div class="textfield-wrap" style="width:200px">
+          <label class="textfield-label">Disabled</label>
+          <div class="textfield disabled"><input placeholder="不可編輯" disabled /></div>
+        </div>
+        <div class="textfield-wrap" style="width:200px">
+          <label class="textfield-label">With Icon</label>
+          <div class="textfield">
+            <span class="material-icons" style="color:var(--secondary);font-size:18px!important">search</span>
+            <input placeholder="搜尋…" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CARD ── -->
+    <section class="section" id="card">
+      <div class="section-title">Card</div>
+      <div class="section-desc">卡片分為 Elevated（陰影 2dp）和 Outlined（1px 邊框）。DIAWorks 產品一律使用 Radius 4。常用於工廠看板，可承載文字、圖表、表格、按鈕等內容。</div>
+
+      <div class="demo-box" style="gap:20px;align-items:flex-start">
+        <!-- Elevated -->
+        <div class="card" style="width:280px">
+          <div class="card-header">
+            <span class="card-header-title">Elevated Card</span>
+            <button class="btn-icon" style="width:28px;height:28px"><span class="material-icons" style="font-size:18px!important">more_vert</span></button>
+          </div>
+          <div class="card-body">
+            <div style="background:var(--comp-hover);border-radius:4px;height:120px;display:flex;align-items:center;justify-content:center;color:var(--primary);margin-bottom:12px">
+              <span class="material-icons" style="font-size:48px!important;opacity:.5">bar_chart</span>
+            </div>
+            <div style="font-weight:500;font-family:'Roboto';margin-bottom:4px">卡片標題</div>
+            <div style="font-size:13px;color:var(--text-medium);line-height:1.5">卡片適合用於報表呈現，常用於工廠戰情室看板。</div>
+          </div>
+          <div class="card-actions">
+            <button class="btn btn-outlined btn-s">操作</button>
+          </div>
+        </div>
+
+        <!-- Outlined -->
+        <div class="card outlined" style="width:280px">
+          <div class="card-header">
+            <span class="card-header-title">Outlined Card</span>
+            <button class="btn-icon" style="width:28px;height:28px"><span class="material-icons" style="font-size:18px!important">more_vert</span></button>
+          </div>
+          <div class="card-body">
+            <div style="background:var(--bg-surface-dim-var);border-radius:4px;height:120px;display:flex;align-items:center;justify-content:center;color:var(--secondary);margin-bottom:12px">
+              <span class="material-icons" style="font-size:48px!important;opacity:.4">show_chart</span>
+            </div>
+            <div style="font-weight:500;font-family:'Roboto';margin-bottom:4px">線框卡片</div>
+            <div style="font-size:13px;color:var(--text-medium);line-height:1.5">需要突顯卡片層次，或白色背景上需明確邊界時使用。</div>
+          </div>
+          <div class="card-actions">
+            <button class="btn btn-outlined btn-s">操作</button>
+          </div>
+        </div>
+
+        <!-- No Header -->
+        <div class="card" style="width:280px">
+          <div class="card-body">
+            <div style="font-weight:500;font-family:'Roboto';font-size:14px;color:var(--text-medium);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px">No Header</div>
+            <div style="font-size:13px;color:var(--text-medium);line-height:1.5">不顯示 Header 時，內容直接顯示在卡片容器內。</div>
+            <div style="margin-top:12px;display:flex;gap:8px">
+              <span class="chip chip-s chip-processing"><span class="chip-label">運行中</span></span>
+              <span class="chip chip-s chip-success"><span class="chip-label">正常</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── DIALOG ── -->
+    <section class="section" id="dialog">
+      <div class="section-title">Dialog</div>
+      <div class="section-desc">彈窗用於呈現重要資訊或需要使用者做決定的情境。有 XS / SM / MD / LG / XL 五種尺寸。</div>
+      <div class="demo-box" style="background:var(--bg-surface-dim-var)">
+        <div class="dialog-preview">
+          <div class="dialog-header">
+            <span class="dialog-title">確認刪除</span>
+            <button class="btn-icon"><span class="material-icons">close</span></button>
+          </div>
+          <div class="dialog-body">
+            您確定要刪除 <b>CNC-07</b> 的設定資料嗎？此操作無法復原，刪除後資料將永久移除。
+          </div>
+          <div class="dialog-footer">
+            <button class="btn btn-outlined btn-m">取消</button>
+            <button class="btn btn-contained btn-m err">刪除</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── TAB ── -->
+    <section class="section" id="tab">
+      <div class="section-title">Tab</div>
+      <div class="section-desc">提供 Primary Tab 和 Secondary Tab，用於切換內容視圖。</div>
+      <div class="demo-box col" style="padding:0">
+        <div class="tab-bar">
+          <div class="tab-item active">概覽</div>
+          <div class="tab-item">機台狀態</div>
+          <div class="tab-item">品質報告</div>
+          <div class="tab-item">維護記錄</div>
+        </div>
+        <div style="padding:16px;background:var(--bg-surface);font-size:13px;color:var(--text-medium)">
+          切換 Tab 顯示對應的內容區域。
+        </div>
+      </div>
+    </section>
+
+    <!-- ── STEPPER ── -->
+    <section class="section" id="stepper">
+      <div class="section-title">Stepper</div>
+      <div class="section-desc">引導使用者完成多步驟的流程。</div>
+      <div class="demo-box">
+        <div class="stepper">
+          <div class="step">
+            <div class="step-circle done">✓</div>
+            <span class="step-label">選擇設備</span>
+          </div>
+          <div class="step-connector done"></div>
+          <div class="step">
+            <div class="step-circle active">2</div>
+            <span class="step-label active">設定參數</span>
+          </div>
+          <div class="step-connector"></div>
+          <div class="step">
+            <div class="step-circle">3</div>
+            <span class="step-label">確認部署</span>
+          </div>
+          <div class="step-connector"></div>
+          <div class="step">
+            <div class="step-circle">4</div>
+            <span class="step-label">完成</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── TYPOGRAPHY ── -->
+    <section class="section" id="typography">
+      <div class="section-title">Typography</div>
+      <div class="section-desc">FAS 設計系統使用兩種字體：中文介面使用 <b>Noto Sans TC</b>，英文數字使用 <b>Roboto</b>。</div>
+      <div class="demo-box col" style="padding:0;overflow:hidden">
+        <table class="typo-table">
+          <thead><tr><th>層級</th><th>字體</th><th>Size / Weight / LH</th><th>預覽</th></tr></thead>
+          <tbody>
+            <tr><td>Subhead 1 (中)</td><td>Noto Sans TC</td><td>16px / 500 / 24px</td><td style="font-family:'Noto Sans TC';font-weight:500;font-size:16px;line-height:24px">頁面標題文字</td></tr>
+            <tr><td>Subhead 1 (En)</td><td>Roboto</td><td>16px / 500 / 24px / ls0.5</td><td style="font-family:'Roboto';font-weight:500;font-size:16px;line-height:24px;letter-spacing:.5px">Page Title Text</td></tr>
+            <tr><td>Subhead 2 (En)</td><td>Roboto</td><td>14px / 500 / 20px / ls0.25</td><td style="font-family:'Roboto';font-weight:500;font-size:14px;line-height:20px;letter-spacing:.25px">Section Title</td></tr>
+            <tr><td>Body 2 (中)</td><td>Noto Sans TC</td><td>14px / 400 / 20px / ls0.25</td><td style="font-family:'Noto Sans TC';font-weight:400;font-size:14px;line-height:20px;letter-spacing:.035px">內文段落文字</td></tr>
+            <tr><td>Body 2 (En)</td><td>Roboto</td><td>14px / 400 / 20px / ls0.25</td><td style="font-family:'Roboto';font-weight:400;font-size:14px;line-height:20px;letter-spacing:.25px">Body paragraph text</td></tr>
+            <tr><td>Button</td><td>Roboto</td><td>14px / 500 / 20px</td><td><button class="btn btn-contained btn-s">Button</button></td></tr>
+            <tr><td>Caption (En)</td><td>Roboto</td><td>12px / 400 / 18px</td><td style="font-family:'Roboto';font-weight:400;font-size:12px;line-height:18px;color:var(--text-medium)">Caption · timestamp · helper text</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ── COLOR TOKENS ── -->
+    <section class="section" id="color">
+      <div class="section-title">Color Tokens</div>
+      <div class="section-desc">所有顏色以 Token 名稱引用，不寫死色碼。詳見 <code>token.md</code>。</div>
+      <div class="demo-box" style="flex-wrap:wrap;gap:8px">
+        <!-- Brand -->
+        <div style="display:flex;flex-direction:column;gap:4px;align-items:center">
+          <div style="width:56px;height:56px;border-radius:4px;background:var(--delta-blue)"></div>
+          <span style="font-size:10px;color:var(--text-medium);font-family:'Roboto'">delta-blue</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px;align-items:center">
+          <div style="width:56px;height:56px;border-radius:4px;background:var(--primary)"></div>
+          <span style="font-size:10px;color:var(--text-medium);font-family:'Roboto'">primary</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px;align-items:center">
+          <div style="width:56px;height:56px;border-radius:4px;background:var(--secondary)"></div>
+          <span style="font-size:10px;color:var(--text-medium);font-family:'Roboto'">secondary</span>
+        </div>
+        <!-- Status -->
+        <div style="display:flex;flex-direction:column;gap:4px;align-items:center">
+          <div style="width:56px;height:56px;border-radius:4px;background:var(--status-processing)"></div>
+          <span style="font-size:10px;color:var(--text-medium);font-family:'Roboto'">processing</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px;align-items:center">
+          <div style="width:56px;height:56px;border-radius:4px;background:var(--status-success)"></div>
+          <span style="font-size:10px;color:var(--text-medium);font-family:'Roboto'">success</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px;align-items:center">
+          <div style="width:56px;height:56px;border-radius:4px;background:var(--status-warning)"></div>
+          <span style="font-size:10px;color:var(--text-medium);font-family:'Roboto'">warning</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px;align-items:center">
+          <div style="width:56px;height:56px;border-radius:4px;background:var(--status-emergency)"></div>
+          <span style="font-size:10px;color:var(--text-medium);font-family:'Roboto'">emergency</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px;align-items:center">
+          <div style="width:56px;height:56px;border-radius:4px;background:var(--status-error)"></div>
+          <span style="font-size:10px;color:var(--text-medium);font-family:'Roboto'">error</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px;align-items:center">
+          <div style="width:56px;height:56px;border-radius:4px;background:var(--status-milestone)"></div>
+          <span style="font-size:10px;color:var(--text-medium);font-family:'Roboto'">milestone</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px;align-items:center">
+          <div style="width:56px;height:56px;border-radius:4px;background:var(--status-idle)"></div>
+          <span style="font-size:10px;color:var(--text-medium);font-family:'Roboto'">idle</span>
+        </div>
+        <!-- BG -->
+        <div style="display:flex;flex-direction:column;gap:4px;align-items:center">
+          <div style="width:56px;height:56px;border-radius:4px;background:var(--bg-surface);border:1px solid var(--divider)"></div>
+          <span style="font-size:10px;color:var(--text-medium);font-family:'Roboto'">surface</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px;align-items:center">
+          <div style="width:56px;height:56px;border-radius:4px;background:var(--bg-surface-dim);border:1px solid var(--divider)"></div>
+          <span style="font-size:10px;color:var(--text-medium);font-family:'Roboto'">surface-dim</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px;align-items:center">
+          <div style="width:56px;height:56px;border-radius:4px;background:var(--bg-container-high)"></div>
+          <span style="font-size:10px;color:var(--text-medium);font-family:'Roboto'">container-high</span>
+        </div>
+        <!-- Text -->
+        <div style="display:flex;flex-direction:column;gap:4px;align-items:center">
+          <div style="width:56px;height:56px;border-radius:4px;background:var(--text-high);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-family:'Roboto'">Aa</div>
+          <span style="font-size:10px;color:var(--text-medium);font-family:'Roboto'">text-high</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px;align-items:center">
+          <div style="width:56px;height:56px;border-radius:4px;background:var(--text-medium);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-family:'Roboto'">Aa</div>
+          <span style="font-size:10px;color:var(--text-medium);font-family:'Roboto'">text-medium</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px;align-items:center">
+          <div style="width:56px;height:56px;border-radius:4px;background:var(--text-disabled);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-family:'Roboto'">Aa</div>
+          <span style="font-size:10px;color:var(--text-medium);font-family:'Roboto'">text-disabled</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+// Sidebar active state on scroll
+const sections = document.querySelectorAll('.section');
+const links = document.querySelectorAll('.sidebar a');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      links.forEach(l => l.classList.remove('active'));
+      const link = document.querySelector(`.sidebar a[href="#${entry.target.id}"]`);
+      if (link) link.classList.add('active');
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
