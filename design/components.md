@@ -1304,13 +1304,14 @@ Text Field 依樣式與 Label 位置分為多個元件：
 
 ### 說明
 
-平台導覽列橫跨整個視窗頂端，高度固定 56px，白色背景配底部分隔線。左側放置 App Mosaic Icon 與應用程式名稱，右側提供說明文件、設定、語言切換、通知與使用者頭像五個操作入口。
+平台導覽列橫跨整個視窗頂端，高度固定 60px，白色背景配底部分隔線。最左側放置漢堡選單按鈕（用於切換 Side Menu 展開/收折），接著是 App Logo 與應用程式名稱，右側提供說明文件、設定、語言切換、通知與使用者頭像五個操作入口。
 
 ### 結構
 
 | 區域 | 元素 | 說明 |
 |------|------|------|
-| 左側 | App Mosaic Icon | 28×28px · 4 色方格（2×2 grid，gap 2px，border-radius 2px） |
+| 最左側 | 漢堡選單按鈕 | 36×36px · `menu` icon · 點擊切換 Side Menu 展開/收折 |
+| 左側 | App Logo | SVG · height 30px |
 | 左側 | App Name | Roboto Bold 16px · letter-spacing 0.5px |
 | 右側 | Icon Button | 36×36px 圓形 · 5 種操作（help / settings / language / notification / avatar） |
 | 右側 | Language Selector | Roboto 14px · 32px 高 · border-radius 4px |
@@ -1320,11 +1321,10 @@ Text Field 依樣式與 Label 位置分為多個元件：
 
 ```css
 /* Container */
-height: 56px;
+height: 60px;
 background: var(--bg-surface);           /* #ffffff */
 border-bottom: 1px solid var(--divider); /* #d9d9d9 */
-box-shadow: 0 1px 4px rgba(46,46,46,0.08);
-padding: 0 16px;
+padding: 0 20px;
 
 /* App Name */
 font-family: 'Roboto'; font-weight: 700; font-size: 16px;
@@ -1367,39 +1367,48 @@ color: #ffffff; font-family: 'Roboto'; font-weight: 500; font-size: 13px;
 
 ### 說明
 
-側邊導覽固定於左側，寬度 200px，白色背景配右側分隔線。支援一層展開樹狀結構（L1 → L2），上方顯示分類標題，下方顯示各功能導覽項目，底部固定顯示版本號。
+側邊導覽固定於左側，支援展開（280px）與收折（80px icon-only）兩種狀態，由 Navigation Bar 左側的漢堡按鈕切換。展開時白色背景配右側分隔線，支援一層展開樹狀結構（L1 → L2）；收折時僅顯示 icon，Category Header 與子選單均隱藏。
 
 ### Variants
 
 | Property | Values |
 |----------|--------|
+| 顯示模式 | `Expanded`（280px） · `Collapsed`（80px，icon only） |
 | Item Type | `Parent`（有子項，可展開） · `Leaf`（無子項，直接連結） |
 | State | `Inactive` · `Hover` · `Active`（Selected） |
 | Sub-item State | `Inactive` · `Hover` · `Active` |
-| Expanded | `True` · `False`（Parent 專屬） |
+| Group Expanded | `True` · `False`（Parent 專屬） |
 
 ### 結構
 
 | 元素 | 規格 |
 |------|------|
-| Category Header | Noto Sans TC 500 13px · `primary` · 左側小圖示 · border-bottom divider |
+| Category Header | Noto Sans TC 500 13px · `primary` · 左側小圖示 · border-bottom divider · 收折時隱藏 |
 | Nav Item 容器 | 高 40px · padding 0 8px 0 12px · border-left 2px（active 時顯示 primary） |
 | Nav Item Icon | Material Icons 20px · opacity 0.85 · 隨 Item 色變化 |
-| Nav Item Label | Noto Sans TC 13px |
-| Chevron | Material Icons 18px · `expand_more` · active 時旋轉 180° |
-| Sub-item 容器 | 高 36px · padding-left 44px · 背景 `bg-surface-dim` |
-| Version Footer | Roboto 12px · `primary` · border-top divider |
+| Nav Item Label | Noto Sans TC 13px · 收折時隱藏 |
+| Chevron | Material Icons 18px · `expand_more` · expanded 時旋轉 180° · 收折時隱藏 |
+| Sub-item 群組 | margin-left 22px · border-left 1px solid `divider`（群組導引線） · 收折時隱藏 |
+| Sub-item 容器 | 高 36px · padding-left 22px · 背景與父層相同（`bg-surface`） |
+| Version Footer | Roboto 12px · `primary` · border-top divider · 收折時隱藏 |
 
 ### 樣式規格
 
 ```css
 /* Sidenav Container */
-width: 200px;
+width: 280px;                            /* 收折時: 80px */
 background: var(--bg-surface);
 border-right: 1px solid var(--divider);
+transition: width .2s ease;
+overflow: hidden;
+
+/* Collapsed 狀態 */
+.platform-sidenav.collapsed { width: 80px; }
+/* 收折時隱藏: label、chevron、category-header、sub-menu、footer */
 
 /* Nav Item (default) */
 height: 40px;
+padding: 0 8px 0 12px;
 color: var(--text-high);
 border-left: 2px solid transparent;
 font-family: 'Noto Sans TC'; font-size: 13px;
@@ -1414,10 +1423,14 @@ color: var(--primary);
 border-left-color: var(--primary);
 font-weight: 500;
 
+/* Sub-item 群組容器（展開時的導引線） */
+margin-left: 22px;
+border-left: 1px solid var(--divider);  /* 群組歸屬導引線 */
+
 /* Sub-item */
 height: 36px;
-padding-left: 44px;
-background: var(--bg-surface-dim);      /* #fafafa */
+padding-left: 22px;
+background: var(--bg-surface);          /* 與父層相同，無 dim */
 
 /* Version Footer */
 font-family: 'Roboto'; font-size: 12px;
@@ -1430,17 +1443,18 @@ color: var(--primary);
 |----------|-------|
 | 容器背景 | `background / surface` |
 | 右側邊線 | `divider` |
+| Sub-item 群組導引線 | `divider` |
 | Item 預設文字 | `text / high emphasis` |
 | Item hover 背景 | `component status / hover` |
 | Item active 背景 | `component status / hover` |
 | Item active 文字 / icon | `primary` |
 | Item active 左側 border | `primary` |
-| Sub-item 背景 | `background / surface dim` |
+| Sub-item 背景 | `background / surface`（與父層相同） |
 | Category Header 文字 | `primary` |
 | Version 文字 | `primary` |
 
 ---
 
-> 最後更新：2026-03-30
+> 最後更新：2026-03-30（Navigation bar / Side menu 收折行為更新）
 > 顏色數值請查閱 `token.md`，Token 名稱格式為 `分類 / 子項目`
 > 樣式規格來源：Figma Web Design Kit (Beta) — 透過 Figma MCP 直接擷取

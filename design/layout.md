@@ -161,6 +161,7 @@ Viewport 1920px
 | 水平 padding | 20px |
 | Position | `sticky; top: 0` |
 | Z-index | 100 |
+| 最左側內容 | 漢堡選單按鈕（36×36px，切換 Side Menu 展開/收折） |
 | 左側內容 | App Logo + App Name（Roboto Bold 16px） |
 | 右側內容 | Icon Buttons（36×36px）、Language Selector、User Avatar（32×32px） |
 
@@ -169,6 +170,7 @@ Viewport 1920px
 | 項目 | 展開（Default） | 收合（Narrow） |
 |------|---------------|--------------|
 | 寬度 | 280px | 80px |
+| 切換方式 | 頂部漢堡按鈕，`transition: width .2s ease` | — |
 | 背景 | `background / surface` | `background / surface` |
 | 右側邊線 | 1px solid `divider` | 1px solid `divider` |
 | Padding（四邊） | 12px | 12px |
@@ -176,6 +178,18 @@ Viewport 1920px
 | Position | `sticky; top: 60px` | `sticky; top: 60px` |
 | 高度 | `calc(100vh - 60px)` | `calc(100vh - 60px)` |
 | Overflow | `auto`（可捲動） | `auto` |
+| 收折時隱藏 | — | Category Header、Label、Chevron、Sub-menu、Footer |
+
+### Sub-item 群組導引線
+
+子選單展開時，群組容器顯示左側導引線，表示項目的從屬關係。
+
+| 項目 | 規格 |
+|------|------|
+| 群組容器 margin-left | 22px（對齊 icon 中心） |
+| 導引線 | `border-left: 1px solid var(--divider)` |
+| Sub-item padding-left | 22px |
+| Sub-item 背景 | `background / surface`（與父層相同，不使用 dim） |
 
 ### Main Content Area
 
@@ -191,5 +205,5 @@ Viewport 1920px
 
 ---
 
-> 最後更新：2026-03-30
+> 最後更新：2026-03-30（Side Menu 收折行為、sub-item 導引線規格補充）
 > Figma 來源：`通用平台選單 > 通用平台選單配置`、`開發者平台選單`
