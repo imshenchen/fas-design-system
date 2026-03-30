@@ -77,6 +77,60 @@
 }
 
 /* ─────────────────────────────────────────
+   DARK MODE TOKEN OVERRIDES
+───────────────────────────────────────── */
+[data-theme="dark"] {
+  /* Backgrounds */
+  --bg-surface: #1e1e1e;
+  --bg-surface-dim: #161616;
+  --bg-surface-dim-var: #1d1f23;
+  --bg-container-low: #2c2c2c;
+  --bg-container-high: #383838;
+  --elevation-02dp: #242424;
+  --elevation-08dp: #2e2e2e;
+
+  /* Text */
+  --text-high: #e8e8e8;
+  --text-body: #e8e8e8;
+  --text-medium: #a0a0a0;
+  --text-disabled: #555555;
+  --text-placeholder: #666666;
+  --secondary: #9e9e9e;
+
+  /* Borders & Dividers */
+  --divider: #3a3a3a;
+  --card-outlined: #3a3a3a;
+
+  /* Component states */
+  --comp-hover: rgba(0,173,239,0.15);
+  --comp-hover-secondary: #2a2a2a;
+  --comp-disabled-con: #2c2c2c;
+  --comp-disabled-el: #4a4a4a;
+  --scroll-bar: rgba(255,255,255,0.2);
+
+  /* Switch */
+  --switch-track-off: #555555;
+
+  /* Alert — dark backgrounds */
+  --alert-bg-error: #2d1012;       --alert-border-error: #5c2226;
+  --alert-bg-warning: #2d2200;     --alert-border-warning: #5c4400;
+  --alert-bg-success: #162408;     --alert-border-success: #2c4810;
+  --alert-bg-processing: #0a1f2d;  --alert-border-processing: #144060;
+
+  /* Chip — dark backgrounds */
+  --chip-processing: #0a2535;  --chip-text-processing: #62cff4;
+  --chip-success: #0d2006;     --chip-text-success: #8fdb4a;
+  --chip-warning: #2d2200;     --chip-text-warning: #ffd04d;
+  --chip-emergency: #2d1200;   --chip-text-emergency: #ff9a5c;
+  --chip-error: #2d0a0d;       --chip-text-error: #ff6b72;
+  --chip-milestone: #1a1426;   --chip-text-milestone: #b59fd6;
+  --chip-idle: #2a2a2a;        --chip-text-idle: #aaaaaa;
+  --chip-mariner: #0e1f3d;     --chip-text-mariner: #7aaaf5;
+  --chip-moss: #131e08;        --chip-text-moss: #8fc452;
+  --chip-bronze: #2d1a00;      --chip-text-bronze: #d4955a;
+}
+
+/* ─────────────────────────────────────────
    BASE
 ───────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -643,6 +697,9 @@ html { scroll-behavior: smooth; }
   </a>
   <span class="platform-nav-app-name" style="margin-left:8px">FAS Design Library Showcase</span>
   <div class="platform-nav-actions">
+    <button class="platform-nav-icon-btn" id="dark-mode-btn" onclick="toggleDarkMode()" title="切換深色模式">
+      <span class="material-icons">dark_mode</span>
+    </button>
     <button class="platform-nav-icon-btn" title="說明文件">
       <span class="material-icons">help_outline</span>
     </button>
@@ -1685,6 +1742,14 @@ html { scroll-behavior: smooth; }
 </div>
 
 <script>
+// Dark mode toggle
+function toggleDarkMode() {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  const icon = document.querySelector('#dark-mode-btn .material-icons');
+  icon.textContent = isDark ? 'dark_mode' : 'light_mode';
+}
+
 // Toggle sidenav collapsed/expanded
 function toggleSidenav() {
   const sidenav = document.querySelector('.platform-sidenav.page-sidenav');
