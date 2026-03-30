@@ -69,6 +69,11 @@
   --switch-thumb-on: #00adef;
   --switch-thumb-off: #ffffff;
   --scroll-bar: rgba(0,0,0,0.25);
+
+  /* Derived / composite tokens */
+  --comp-hover-contained-error: #c82030;  /* error btn hover — darker than status-error */
+  --comp-hover-secondary: #f3f3f3;        /* secondary outlined btn hover */
+  --demo-bg-dark: #222222;               /* showcase only: dark demo box background */
 }
 
 /* ─────────────────────────────────────────
@@ -131,7 +136,7 @@ html { scroll-behavior: smooth; }
   display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
 }
 .demo-box.col { flex-direction: column; align-items: flex-start; }
-.demo-box.dark { background: #222; }
+.demo-box.dark { background: var(--demo-bg-dark); }
 .demo-label {
   font-size: 11px; font-family: 'Roboto'; color: var(--text-medium);
   margin-top: 16px; margin-bottom: 6px; letter-spacing: .3px;
@@ -152,14 +157,14 @@ html { scroll-behavior: smooth; }
 .btn-contained { background: var(--primary); color: var(--text-white); border: 1px solid transparent; }
 .btn-contained:hover { background: var(--comp-hover-contained); }
 .btn-contained.err { background: var(--status-error); }
-.btn-contained.err:hover { background: #c82030; }
+.btn-contained.err:hover { background: var(--comp-hover-contained-error); }
 /* Outlined */
 .btn-outlined { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
 .btn-outlined:hover { background: var(--comp-hover); }
 .btn-outlined.sec { border-color: var(--secondary); color: var(--secondary); }
-.btn-outlined.sec:hover { background: #f5f5f5; }
+.btn-outlined.sec:hover { background: var(--comp-hover-secondary); }
 .btn-outlined.err { border-color: var(--status-error); color: var(--status-error); }
-.btn-outlined.err:hover { background: #fef1f1; }
+.btn-outlined.err:hover { background: var(--alert-bg-error); }
 /* Text */
 .btn-text { background: transparent; color: var(--primary); padding: 8px 8px; border: 1px solid transparent; }
 .btn-text:hover { background: var(--comp-hover); }
@@ -180,7 +185,7 @@ html { scroll-behavior: smooth; }
 .btn-icon:hover { background: var(--comp-hover); color: var(--primary); }
 .btn-icon.l { width: 44px; height: 44px; }
 /* FAB */
-.fab { width: 56px; height: 56px; border-radius: 50%; background: var(--primary); color: #fff; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 3px 8px rgba(0,0,0,0.2); }
+.fab { width: 56px; height: 56px; border-radius: 50%; background: var(--primary); color: var(--text-white); border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 3px 8px rgba(0,0,0,0.2); }
 .fab:hover { background: var(--comp-hover-contained); }
 /* Fully rounded */
 .btn-rounded { border-radius: 99px; }
@@ -372,7 +377,7 @@ html { scroll-behavior: smooth; }
 /* Switch */
 .switch-wrap { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
 .switch { width: 36px; height: 20px; border-radius: 10px; background: var(--switch-track-off); position: relative; transition: background .2s; }
-.switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.3); transition: left .2s; }
+.switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: var(--switch-thumb-off); box-shadow: 0 1px 3px rgba(0,0,0,0.3); transition: left .2s; }
 .switch.on { background: var(--primary); }
 .switch.on::after { left: 18px; }
 .switch.disabled { background: var(--comp-disabled-con); }
@@ -410,7 +415,7 @@ html { scroll-behavior: smooth; }
 .tooltip-wrap { position: relative; display: inline-flex; cursor: pointer; }
 .tooltip-box {
   position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%);
-  background: #333; color: #fff; font-family: 'Roboto'; font-size: 12px; line-height: 18px;
+  background: var(--text-high); color: var(--text-white); font-family: 'Roboto'; font-size: 12px; line-height: 18px;
   padding: 4px 8px; border-radius: 4px; white-space: nowrap; pointer-events: none;
   opacity: 0; transition: opacity .15s;
 }
@@ -548,6 +553,15 @@ html { scroll-behavior: smooth; }
 .platform-sidenav.collapsed .platform-nav-sub,
 .platform-sidenav.collapsed .platform-sidenav-footer { display: none; }
 .platform-sidenav.collapsed .platform-nav-item { justify-content: center; padding: 0 8px; }
+/* Icon size utilities */
+.icon-14 { font-size: 14px !important; }
+.icon-16 { font-size: 16px !important; }
+.icon-18 { font-size: 18px !important; }
+.icon-22 { font-size: 22px !important; }
+.icon-24 { font-size: 24px !important; }
+.icon-28 { font-size: 28px !important; }
+.icon-48 { font-size: 48px !important; }
+
 /* Hamburger menu button */
 .platform-nav-menu-btn {
   width: 36px; height: 36px; flex-shrink: 0;
@@ -792,7 +806,7 @@ html { scroll-behavior: smooth; }
       <div class="subsection">
         <div class="subsection-title">Icon Button（L 36 / M 24 / S 20）</div>
         <div class="demo-box" style="align-items:center">
-          <button class="btn-icon l"><span class="material-icons" style="font-size:24px!important">edit</span></button>
+          <button class="btn-icon l"><span class="material-icons icon-24">edit</span></button>
           <button class="btn-icon"><span class="material-icons">delete_outline</span></button>
           <button class="btn-icon"><span class="material-icons">more_vert</span></button>
           <button class="btn-icon" style="color:var(--primary)"><span class="material-icons">refresh</span></button>
@@ -802,7 +816,7 @@ html { scroll-behavior: smooth; }
       <div class="subsection">
         <div class="subsection-title">FAB / Fully Rounded</div>
         <div class="demo-box">
-          <button class="fab"><span class="material-icons" style="font-size:28px!important">add</span></button>
+          <button class="fab"><span class="material-icons icon-28">add</span></button>
           <button class="btn btn-contained btn-m btn-rounded">Rounded</button>
           <button class="btn btn-outlined btn-m btn-rounded">Rounded</button>
         </div>
@@ -928,9 +942,9 @@ html { scroll-behavior: smooth; }
         <div class="avatar avatar-m avatar-primary">YC</div>
         <div class="avatar avatar-s avatar-primary">YC</div>
         <div class="divider-v"></div>
-        <div class="avatar avatar-l avatar-secondary"><span class="material-icons" style="font-size:22px!important">person</span></div>
-        <div class="avatar avatar-m avatar-secondary"><span class="material-icons" style="font-size:18px!important">person</span></div>
-        <div class="avatar avatar-s avatar-secondary"><span class="material-icons" style="font-size:14px!important">person</span></div>
+        <div class="avatar avatar-l avatar-secondary"><span class="material-icons icon-22">person</span></div>
+        <div class="avatar avatar-m avatar-secondary"><span class="material-icons icon-18">person</span></div>
+        <div class="avatar avatar-s avatar-secondary"><span class="material-icons icon-14">person</span></div>
       </div>
     </section>
 
@@ -1225,7 +1239,7 @@ html { scroll-behavior: smooth; }
         <div class="textfield-wrap" style="width:200px">
           <label class="textfield-label">With Icon</label>
           <div class="textfield">
-            <span class="material-icons" style="color:var(--secondary);font-size:18px!important">search</span>
+            <span class="material-icons icon-18" style="color:var(--secondary)">search</span>
             <input placeholder="搜尋…" />
           </div>
         </div>
@@ -1242,11 +1256,11 @@ html { scroll-behavior: smooth; }
         <div class="card" style="width:280px">
           <div class="card-header">
             <span class="card-header-title">Elevated Card</span>
-            <button class="btn-icon" style="width:28px;height:28px"><span class="material-icons" style="font-size:18px!important">more_vert</span></button>
+            <button class="btn-icon" style="width:28px;height:28px"><span class="material-icons icon-18">more_vert</span></button>
           </div>
           <div class="card-body">
             <div style="background:var(--comp-hover);border-radius:4px;height:120px;display:flex;align-items:center;justify-content:center;color:var(--primary);margin-bottom:12px">
-              <span class="material-icons" style="font-size:48px!important;opacity:.5">bar_chart</span>
+              <span class="material-icons icon-48" style="opacity:.5">bar_chart</span>
             </div>
             <div style="font-weight:500;font-family:'Roboto';margin-bottom:4px">卡片標題</div>
             <div style="font-size:13px;color:var(--text-medium);line-height:1.5">卡片適合用於報表呈現，常用於工廠戰情室看板。</div>
@@ -1260,11 +1274,11 @@ html { scroll-behavior: smooth; }
         <div class="card outlined" style="width:280px">
           <div class="card-header">
             <span class="card-header-title">Outlined Card</span>
-            <button class="btn-icon" style="width:28px;height:28px"><span class="material-icons" style="font-size:18px!important">more_vert</span></button>
+            <button class="btn-icon" style="width:28px;height:28px"><span class="material-icons icon-18">more_vert</span></button>
           </div>
           <div class="card-body">
             <div style="background:var(--bg-surface-dim-var);border-radius:4px;height:120px;display:flex;align-items:center;justify-content:center;color:var(--secondary);margin-bottom:12px">
-              <span class="material-icons" style="font-size:48px!important;opacity:.4">show_chart</span>
+              <span class="material-icons icon-48" style="opacity:.4">show_chart</span>
             </div>
             <div style="font-weight:500;font-family:'Roboto';margin-bottom:4px">線框卡片</div>
             <div style="font-size:13px;color:var(--text-medium);line-height:1.5">需要突顯卡片層次，或白色背景上需明確邊界時使用。</div>
@@ -1424,7 +1438,7 @@ html { scroll-behavior: smooth; }
           <nav class="platform-sidenav">
             <!-- Category header -->
             <div class="platform-sidenav-header">
-              <span class="material-icons" style="font-size:16px!important">open_in_new</span>
+              <span class="material-icons icon-16">open_in_new</span>
               開發者工具
             </div>
 
