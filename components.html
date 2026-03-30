@@ -86,51 +86,22 @@ body {
 ::-webkit-scrollbar-thumb { background: var(--scroll-bar); border-radius: 3px; }
 
 /* ─────────────────────────────────────────
-   TOP NAV
-───────────────────────────────────────── */
-.top-nav {
-  height: 56px;
-  background: var(--delta-blue);
-  display: flex; align-items: center;
-  padding: 0 32px; gap: 16px;
-  position: sticky; top: 0; z-index: 100;
-  box-shadow: 0 1px 4px rgba(46,46,46,0.24);
-}
-.nav-logo {
-  display: flex; align-items: center; gap: 10px;
-  color: #fff;
-  font-family: 'Roboto'; font-weight: 700; font-size: 18px; letter-spacing: .5px;
-}
-.nav-logo svg { width: 28px; height: 28px; }
-.nav-sep { width: 1px; height: 20px; background: rgba(255,255,255,0.3); }
-.nav-title { color: rgba(255,255,255,0.85); font-family: 'Noto Sans TC'; font-size: 14px; }
-.nav-ver { margin-left: auto; color: rgba(255,255,255,0.6); font-size: 12px; font-family: 'Roboto'; }
-
-/* ─────────────────────────────────────────
    LAYOUT
 ───────────────────────────────────────── */
+/* Page-level platform-nav override */
+.platform-nav.page-nav {
+  position: sticky; top: 0; z-index: 100;
+  padding: 0 20px;
+}
 .page { display: flex; min-height: calc(100vh - 56px); }
 
-/* Sidebar nav */
-.sidebar {
-  width: 220px; flex-shrink: 0;
-  background: var(--bg-surface);
-  border-right: 1px solid var(--divider);
-  padding: 16px 0;
+/* Page-level platform-sidenav override */
+.platform-sidenav.page-sidenav {
+  min-height: unset;
   position: sticky; top: 56px;
   height: calc(100vh - 56px);
   overflow-y: auto;
 }
-.sidebar-group { padding: 8px 16px 4px; font-size: 11px; font-weight: 600; color: var(--text-medium); letter-spacing: .8px; text-transform: uppercase; }
-.sidebar a {
-  display: block; padding: 6px 16px;
-  font-size: 13px; color: var(--text-high);
-  text-decoration: none; border-radius: 0;
-  transition: background .1s, color .1s;
-  border-left: 2px solid transparent;
-}
-.sidebar a:hover { background: var(--comp-hover); color: var(--primary); }
-.sidebar a.active { color: var(--primary); border-left-color: var(--primary); background: var(--comp-hover); font-weight: 500; }
 
 /* Main content */
 .main { flex: 1; padding: 32px; }
@@ -502,51 +473,239 @@ html { scroll-behavior: smooth; }
 .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
 .col-demo { display: flex; flex-direction: column; gap: 12px; width: 100%; }
 .material-icons { font-size: 20px !important; }
+
+/* ─────────────────────────────────────────
+   PLATFORM NAVIGATION BAR
+───────────────────────────────────────── */
+.platform-nav {
+  height: 56px;
+  background: var(--bg-surface);
+  display: flex; align-items: center;
+  padding: 0 16px; gap: 4px;
+  border-bottom: 1px solid var(--divider);
+  box-shadow: 0 1px 4px rgba(46,46,46,0.08);
+  width: 100%;
+}
+.platform-nav-logo {
+  display: flex; align-items: center; gap: 8px;
+  text-decoration: none; flex: 1; min-width: 0;
+}
+.platform-nav-mosaic {
+  width: 28px; height: 28px; flex-shrink: 0;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 2px;
+}
+.platform-nav-mosaic span {
+  border-radius: 2px; display: block;
+}
+.platform-nav-app-name {
+  font-family: 'Roboto'; font-weight: 700; font-size: 16px;
+  color: var(--text-high); letter-spacing: .5px; white-space: nowrap;
+}
+.platform-nav-actions {
+  display: flex; align-items: center; gap: 2px; flex-shrink: 0;
+}
+.platform-nav-icon-btn {
+  width: 36px; height: 36px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: none; background: transparent; cursor: pointer;
+  border-radius: 50%; color: var(--secondary);
+  transition: background .15s, color .15s;
+}
+.platform-nav-icon-btn:hover { background: var(--comp-hover); color: var(--primary); }
+.platform-nav-lang {
+  height: 32px; padding: 0 8px;
+  display: inline-flex; align-items: center;
+  border: none; background: transparent; cursor: pointer;
+  font-family: 'Roboto'; font-size: 14px; color: var(--text-medium);
+  border-radius: 4px; transition: background .15s;
+}
+.platform-nav-lang:hover { background: var(--comp-hover); color: var(--primary); }
+.platform-nav-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--primary); color: #fff;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: 'Roboto'; font-weight: 500; font-size: 13px;
+  cursor: pointer; flex-shrink: 0; margin-left: 4px;
+}
+
+/* ─────────────────────────────────────────
+   SIDE MENU
+───────────────────────────────────────── */
+.platform-sidenav {
+  width: 200px; flex-shrink: 0;
+  background: var(--bg-surface);
+  border-right: 1px solid var(--divider);
+}
+.platform-sidenav-header {
+  height: 40px; padding: 0 16px;
+  font-family: 'Noto Sans TC'; font-size: 13px;
+  color: var(--primary); font-weight: 500;
+  cursor: pointer; display: flex; align-items: center; gap: 4px;
+  border-bottom: 1px solid var(--divider);
+}
+.platform-nav-item {
+  display: flex; align-items: center;
+  padding: 0 8px 0 12px; height: 40px; gap: 8px;
+  cursor: pointer;
+  color: var(--text-high); font-size: 14px;
+  font-family: 'Noto Sans TC'; text-decoration: none;
+  transition: background .15s, color .15s;
+  border-left: 2px solid transparent;
+  user-select: none;
+  box-sizing: border-box;
+}
+.platform-nav-item:hover { background: var(--comp-hover); color: var(--primary); }
+.platform-nav-item.active {
+  background: var(--comp-hover); color: var(--primary);
+  border-left-color: var(--primary); font-weight: 500;
+}
+.platform-nav-item .pni-icon {
+  font-size: 20px !important; color: inherit; flex-shrink: 0; opacity: .85;
+}
+.platform-nav-item .pni-label { flex: 1; font-size: 13px; }
+.platform-nav-item .pni-chevron {
+  font-size: 18px !important; color: var(--text-medium); flex-shrink: 0;
+  transition: transform .2s;
+}
+.platform-nav-item.expanded .pni-chevron { transform: rotate(180deg); }
+.platform-nav-sub { background: var(--bg-surface-dim); display: none; }
+.platform-nav-sub.open { display: block; }
+.platform-nav-sub-item {
+  display: flex; align-items: center;
+  padding: 0 12px 0 44px; height: 36px;
+  cursor: pointer; color: var(--text-high); font-size: 13px;
+  font-family: 'Noto Sans TC'; text-decoration: none;
+  transition: background .15s, color .15s;
+  border-left: 2px solid transparent;
+}
+.platform-nav-sub-item:hover { background: var(--comp-hover); color: var(--primary); }
+.platform-nav-sub-item.active {
+  background: var(--comp-hover); color: var(--primary);
+  border-left-color: var(--primary); font-weight: 500;
+}
+.platform-sidenav-footer {
+  padding: 10px 16px;
+  font-family: 'Roboto'; font-size: 12px; color: var(--primary);
+  border-top: 1px solid var(--divider);
+}
 </style>
 </head>
 <body>
 
 <!-- TOP NAV -->
-<nav class="top-nav">
-  <div class="nav-logo">
-    <svg viewBox="0 0 28 28" fill="none">
-      <rect width="28" height="28" rx="4" fill="white" fill-opacity=".15"/>
-      <path d="M6 14L14 6L22 14L14 22L6 14Z" fill="white"/>
-      <path d="M14 10L18 14L14 18L10 14L14 10Z" fill="#0087dc"/>
+<nav class="platform-nav page-nav">
+  <a class="platform-nav-logo" href="#">
+    <svg height="30" viewBox="0 0 225 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M18.55 54.82C18.55 54.99 18.55 55.16 18.56 55.31C18.64 57.31 19.43 59.6 21.17 61.53C22.9 63.46 25.62 64.9 29.19 65.06C29.44 65.07 29.69 65.08 29.95 65.08C34.76 65.06 39.94 62.94 44.7 59.64C44.74 59.61 44.78 59.58 44.81 59.55C46.34 60.53 48.16 61.11 50.11 61.11C55.55 61.11 59.95 56.7 59.95 51.26C59.95 48.77 59.02 46.51 57.49 44.77C58.38 42.67 58.83 40.58 58.83 38.59C58.83 35.73 57.87 33.06 55.96 31.14C54.05 29.21 51.27 28.13 48.01 28.14C47.96 28.14 47.93 28.14 47.9 28.14C40.88 28.22 33.72 32.16 28.17 37.3C22.64 42.5 18.6 48.89 18.54 54.8L18.55 54.82ZM30.67 40C35.73 35.27 42.33 31.82 47.94 31.82H48.01C50.5 31.82 52.22 32.59 53.37 33.74C54.51 34.9 55.17 36.54 55.18 38.61C55.18 39.79 54.96 41.09 54.48 42.46C53.16 41.81 51.68 41.43 50.12 41.43C44.68 41.43 40.27 45.84 40.27 51.27C40.27 53.4 40.95 55.37 42.1 56.98C37.93 59.79 33.49 61.44 29.95 61.43C29.76 61.43 29.56 61.43 29.37 61.42C26.66 61.28 25.01 60.3 23.89 59.09C22.78 57.88 22.27 56.32 22.23 55.17C22.23 55.04 22.23 54.93 22.23 54.83C22.17 50.71 25.59 44.7 30.69 40H30.67Z" fill="white"/>
+      <path d="M107.09 39.41C102.92 33.51 93.63 36.45 93.63 43.68V68.76C93.63 68.99 93.82 69.18 94.05 69.18H102.59C102.82 69.18 103.01 68.99 103.01 68.76V49.2L112.23 62.46H106.26C106.03 62.46 105.84 62.65 105.84 62.87V68.76C105.84 68.99 106.03 69.18 106.26 69.18H117.57C121.99 69.18 124.58 64.19 122.03 60.58L107.09 39.42V39.41Z" fill="#00A0E9"/>
+      <path d="M211.2 39.41L196.26 60.57C193.71 64.18 196.29 69.17 200.72 69.17H212.03C212.26 69.17 212.45 68.98 212.45 68.75V62.86C212.45 62.63 212.26 62.45 212.03 62.45H206.06L215.28 49.19V68.75C215.28 68.98 215.47 69.17 215.7 69.17H224.24C224.47 69.17 224.66 68.98 224.66 68.75V43.67C224.66 36.44 215.37 33.5 211.2 39.4V39.41Z" fill="#00A0E9"/>
+      <path d="M151.71 36.89H125.14C124.91 36.89 124.72 37.08 124.72 37.31V65.84C124.72 67.69 126.22 69.18 128.06 69.18H150.45C151.37 69.18 152.12 68.43 152.12 67.51V62.8C152.12 62.57 151.93 62.38 151.7 62.38H134.2V55.31H149.28C149.51 55.31 149.69 55.12 149.69 54.89V48.98C149.69 48.75 149.5 48.56 149.28 48.56H134.26V43.62H151.7C151.93 43.62 152.12 43.43 152.12 43.2V37.28C152.12 37.05 151.93 36.86 151.7 36.86L151.71 36.89Z" fill="#00A0E9"/>
+      <path d="M179.44 62.45H164.17V37.3C164.17 37.07 163.99 36.88 163.76 36.88H155.39C155.16 36.88 154.97 37.07 154.97 37.3V65.37C154.97 67.47 156.67 69.17 158.77 69.17H178.18C179.1 69.17 179.85 68.42 179.85 67.5V62.86C179.85 62.63 179.66 62.44 179.43 62.44L179.44 62.45Z" fill="#00A0E9"/>
+      <path d="M201.41 43.2V37.3C201.41 37.07 201.22 36.88 201 36.88H173.35C173.12 36.88 172.93 37.07 172.93 37.3V43.23C172.93 43.46 173.12 43.65 173.35 43.65H182.66V68.76C182.66 68.99 182.85 69.18 183.08 69.18H190.13C191.05 69.18 191.8 68.43 191.8 67.51V43.62H201C201.23 43.62 201.41 43.43 201.41 43.2Z" fill="#00A0E9"/>
+      <path d="M0 69.17H83.96L42.08 0L0 69.17ZM48.01 28.16C51.27 28.16 54.06 29.23 55.96 31.16C57.87 33.08 58.83 35.75 58.83 38.61C58.83 40.59 58.38 42.68 57.49 44.79C59.01 46.52 59.95 48.79 59.95 51.28C59.95 56.72 55.55 61.13 50.11 61.13C48.15 61.13 46.34 60.55 44.81 59.57C44.77 59.6 44.73 59.63 44.7 59.66C39.94 62.96 34.76 65.08 29.95 65.1C29.7 65.1 29.44 65.1 29.19 65.08C25.62 64.92 22.9 63.48 21.17 61.55C19.44 59.62 18.65 57.33 18.56 55.33C18.56 55.17 18.55 55.01 18.55 54.84C18.61 48.93 22.65 42.54 28.18 37.34C33.73 32.2 40.88 28.25 47.91 28.18C47.94 28.18 47.97 28.18 48.02 28.18L48.01 28.16Z" fill="#00A0E9"/>
+      <path d="M22.22 55.1601C22.26 56.3101 22.78 57.8701 23.88 59.0801C25 60.2901 26.65 61.2701 29.36 61.4101C29.55 61.4101 29.75 61.4201 29.94 61.4201C33.49 61.4401 37.93 59.7801 42.09 56.9701C40.94 55.3601 40.26 53.3901 40.26 51.2601C40.26 45.8301 44.67 41.4201 50.11 41.4201C51.68 41.4201 53.16 41.8001 54.47 42.4501C54.95 41.0801 55.17 39.7701 55.17 38.6001C55.17 36.5301 54.51 34.8801 53.36 33.7301C52.21 32.5801 50.5 31.8201 48 31.8101H47.93C42.32 31.8101 35.72 35.2601 30.66 39.9901C25.56 44.6901 22.13 50.7001 22.2 54.8201C22.2 54.9201 22.2 55.0301 22.2 55.1601H22.22Z" fill="#00A0E9"/>
     </svg>
-    Delta FAS
+  </a>
+  <div class="platform-nav-actions">
+    <button class="platform-nav-icon-btn" title="說明文件">
+      <span class="material-icons">help_outline</span>
+    </button>
+    <button class="platform-nav-icon-btn" title="設定">
+      <span class="material-icons">settings</span>
+    </button>
+    <button class="platform-nav-lang">En</button>
+    <div class="badge-wrap">
+      <button class="platform-nav-icon-btn" title="通知">
+        <span class="material-icons">notifications_none</span>
+      </button>
+    </div>
+    <div class="platform-nav-avatar">F</div>
   </div>
-  <div class="nav-sep"></div>
-  <span class="nav-title">Design System · Component Showcase</span>
-  <span class="nav-ver">Web Design Kit Beta</span>
 </nav>
 
 <div class="page">
 
   <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="sidebar-group">基礎元件</div>
-    <a href="#button" class="active">Button</a>
-    <a href="#chip">Chip / Status Chip</a>
-    <a href="#badge">Badge</a>
-    <a href="#avatar">Avatar</a>
-    <a href="#divider">Divider</a>
-    <a href="#hyperlink">Hyperlink</a>
-    <div class="sidebar-group">回饋元件</div>
-    <a href="#alert">Alert</a>
-    <a href="#progress">Progress</a>
-    <a href="#tooltip">Tooltip</a>
-    <div class="sidebar-group">輸入元件</div>
-    <a href="#selection">Selection Controls</a>
-    <a href="#textfield">Text Field</a>
-    <div class="sidebar-group">容器元件</div>
-    <a href="#card">Card</a>
-    <a href="#dialog">Dialog</a>
-    <a href="#tab">Tab</a>
-    <a href="#stepper">Stepper</a>
-    <div class="sidebar-group">全局樣式</div>
-    <a href="#typography">Typography</a>
-    <a href="#color">Color Tokens</a>
+  <aside class="platform-sidenav page-sidenav">
+    <div class="platform-sidenav-header">
+      <span class="material-icons" style="font-size:16px!important">palette</span>
+      Component Showcase
+    </div>
+
+    <!-- 基礎元件 -->
+    <div class="platform-nav-item expanded" onclick="toggleSideNav(this)">
+      <span class="material-icons pni-icon">widgets</span>
+      <span class="pni-label">基礎元件</span>
+      <span class="material-icons pni-chevron">expand_more</span>
+    </div>
+    <div class="platform-nav-sub open">
+      <a class="platform-nav-sub-item" href="#button">Button</a>
+      <a class="platform-nav-sub-item" href="#chip">Chip / Status Chip</a>
+      <a class="platform-nav-sub-item" href="#badge">Badge</a>
+      <a class="platform-nav-sub-item" href="#avatar">Avatar</a>
+      <a class="platform-nav-sub-item" href="#divider">Divider</a>
+      <a class="platform-nav-sub-item" href="#hyperlink">Hyperlink</a>
+    </div>
+
+    <!-- 回饋元件 -->
+    <div class="platform-nav-item expanded" onclick="toggleSideNav(this)">
+      <span class="material-icons pni-icon">feedback</span>
+      <span class="pni-label">回饋元件</span>
+      <span class="material-icons pni-chevron">expand_more</span>
+    </div>
+    <div class="platform-nav-sub open">
+      <a class="platform-nav-sub-item" href="#alert">Alert</a>
+      <a class="platform-nav-sub-item" href="#progress">Progress</a>
+      <a class="platform-nav-sub-item" href="#tooltip">Tooltip</a>
+    </div>
+
+    <!-- 輸入元件 -->
+    <div class="platform-nav-item expanded" onclick="toggleSideNav(this)">
+      <span class="material-icons pni-icon">edit_note</span>
+      <span class="pni-label">輸入元件</span>
+      <span class="material-icons pni-chevron">expand_more</span>
+    </div>
+    <div class="platform-nav-sub open">
+      <a class="platform-nav-sub-item" href="#selection">Selection Controls</a>
+      <a class="platform-nav-sub-item" href="#textfield">Text Field</a>
+    </div>
+
+    <!-- 容器元件 -->
+    <div class="platform-nav-item expanded" onclick="toggleSideNav(this)">
+      <span class="material-icons pni-icon">layers</span>
+      <span class="pni-label">容器元件</span>
+      <span class="material-icons pni-chevron">expand_more</span>
+    </div>
+    <div class="platform-nav-sub open">
+      <a class="platform-nav-sub-item" href="#card">Card</a>
+      <a class="platform-nav-sub-item" href="#dialog">Dialog</a>
+      <a class="platform-nav-sub-item" href="#tab">Tab</a>
+      <a class="platform-nav-sub-item" href="#stepper">Stepper</a>
+    </div>
+
+    <!-- 導覽元件 -->
+    <div class="platform-nav-item expanded" onclick="toggleSideNav(this)">
+      <span class="material-icons pni-icon">navigation</span>
+      <span class="pni-label">導覽元件</span>
+      <span class="material-icons pni-chevron">expand_more</span>
+    </div>
+    <div class="platform-nav-sub open">
+      <a class="platform-nav-sub-item" href="#platform-navbar">Navigation bar</a>
+      <a class="platform-nav-sub-item" href="#platform-sidenav">Side menu</a>
+    </div>
+
+    <!-- 全局樣式 -->
+    <div class="platform-nav-item expanded" onclick="toggleSideNav(this)">
+      <span class="material-icons pni-icon">style</span>
+      <span class="pni-label">全局樣式</span>
+      <span class="material-icons pni-chevron">expand_more</span>
+    </div>
+    <div class="platform-nav-sub open">
+      <a class="platform-nav-sub-item" href="#typography">Typography</a>
+      <a class="platform-nav-sub-item" href="#color">Color Tokens</a>
+    </div>
+
+    <div class="platform-sidenav-footer">Web Design Kit Beta</div>
   </aside>
 
   <!-- MAIN -->
@@ -1175,6 +1334,222 @@ html { scroll-behavior: smooth; }
       </div>
     </section>
 
+    <!-- ── PLATFORM NAVIGATION BAR ── -->
+    <section class="section" id="platform-navbar">
+      <div class="section-title">Navigation bar</div>
+      <div class="section-desc">開發者平台的頂端導覽列。高度 56px，白色背景，左側為應用程式 Logo 與名稱，右側為功能操作圖示列（說明文件、設定、語言、通知、使用者）。</div>
+
+      <div class="subsection">
+        <div class="subsection-title">Default State</div>
+        <div class="demo-box" style="padding:0;overflow:hidden;display:block">
+          <div class="platform-nav">
+            <!-- Logo -->
+            <a class="platform-nav-logo" href="#">
+              <div class="platform-nav-mosaic">
+                <span style="background:#00c4b3"></span>
+                <span style="background:#0087dc"></span>
+                <span style="background:#f5b900"></span>
+                <span style="background:#f66d20"></span>
+              </div>
+              <span class="platform-nav-app-name">APP Name</span>
+            </a>
+            <!-- Actions -->
+            <div class="platform-nav-actions">
+              <button class="platform-nav-icon-btn" title="說明文件">
+                <span class="material-icons">help_outline</span>
+              </button>
+              <button class="platform-nav-icon-btn" title="設定">
+                <span class="material-icons">settings</span>
+              </button>
+              <button class="platform-nav-lang">En</button>
+              <div class="badge-wrap">
+                <button class="platform-nav-icon-btn" title="通知">
+                  <span class="material-icons">notifications_none</span>
+                </button>
+                <span class="badge dot alert"></span>
+              </div>
+              <div class="platform-nav-avatar">K</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title">Anatomy</div>
+        <div class="demo-box col">
+          <table class="typo-table">
+            <thead><tr><th>區域</th><th>元素</th><th>規格</th></tr></thead>
+            <tbody>
+              <tr><td>左側</td><td>App Mosaic Icon</td><td>28×28px · 4 色方格 · border-radius 2px</td></tr>
+              <tr><td>左側</td><td>App Name</td><td>Roboto Bold 16px · <code>text-high</code></td></tr>
+              <tr><td>右側</td><td>Icon Button</td><td>36×36px 圓形 · <code>secondary</code> · Hover: <code>comp-hover</code></td></tr>
+              <tr><td>右側</td><td>Language Selector</td><td>Roboto 14px · 32px 高 · border-radius 4px</td></tr>
+              <tr><td>右側</td><td>User Avatar</td><td>32×32px 圓形 · 背景 <code>primary</code> · 白色首字母</td></tr>
+              <tr><td>容器</td><td>Nav Bar</td><td>高 56px · 背景 <code>bg-surface</code> · border-bottom <code>divider</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── PLATFORM SIDE NAVIGATION ── -->
+    <section class="section" id="platform-sidenav">
+      <div class="section-title">Side menu</div>
+      <div class="section-desc">開發者平台的側邊導覽選單。寬度 200px，白色背景，支援一層展開的樹狀結構。選中項目以 <code>primary</code> 色與淺藍底色標示，底部顯示版本資訊。</div>
+
+      <div class="subsection">
+        <div class="subsection-title">Interactive Demo</div>
+        <div class="demo-box" style="padding:0;overflow:hidden;align-items:flex-start;gap:0">
+          <nav class="platform-sidenav">
+            <!-- Category header -->
+            <div class="platform-sidenav-header">
+              <span class="material-icons" style="font-size:16px!important">open_in_new</span>
+              開發者工具
+            </div>
+
+            <!-- 節點 (expandable, expanded) -->
+            <div class="platform-nav-item expanded" onclick="toggleSideNav(this)">
+              <span class="material-icons pni-icon">hub</span>
+              <span class="pni-label">節點</span>
+              <span class="material-icons pni-chevron">expand_more</span>
+            </div>
+            <div class="platform-nav-sub open">
+              <a class="platform-nav-sub-item active" href="#">節點管理</a>
+              <a class="platform-nav-sub-item" href="#">設備連線模板</a>
+            </div>
+
+            <!-- 數據處理 -->
+            <div class="platform-nav-item" onclick="toggleSideNav(this)">
+              <span class="material-icons pni-icon">storage</span>
+              <span class="pni-label">數據處理</span>
+              <span class="material-icons pni-chevron">expand_more</span>
+            </div>
+            <div class="platform-nav-sub">
+              <a class="platform-nav-sub-item" href="#">資料管線</a>
+              <a class="platform-nav-sub-item" href="#">資料集</a>
+            </div>
+
+            <!-- 低代碼工具 -->
+            <div class="platform-nav-item" onclick="toggleSideNav(this)">
+              <span class="material-icons pni-icon">code</span>
+              <span class="pni-label">低代碼工具</span>
+              <span class="material-icons pni-chevron">expand_more</span>
+            </div>
+            <div class="platform-nav-sub">
+              <a class="platform-nav-sub-item" href="#">工作流程</a>
+              <a class="platform-nav-sub-item" href="#">表單設計</a>
+            </div>
+
+            <!-- 應用程式 -->
+            <div class="platform-nav-item" onclick="toggleSideNav(this)">
+              <span class="material-icons pni-icon">apps</span>
+              <span class="pni-label">應用程式</span>
+              <span class="material-icons pni-chevron">expand_more</span>
+            </div>
+            <div class="platform-nav-sub">
+              <a class="platform-nav-sub-item" href="#">已部署應用</a>
+            </div>
+
+            <!-- 告警管理 -->
+            <div class="platform-nav-item" onclick="toggleSideNav(this)">
+              <span class="material-icons pni-icon">notifications_active</span>
+              <span class="pni-label">告警管理</span>
+              <span class="material-icons pni-chevron">expand_more</span>
+            </div>
+            <div class="platform-nav-sub">
+              <a class="platform-nav-sub-item" href="#">告警規則</a>
+            </div>
+
+            <!-- AI服務 -->
+            <div class="platform-nav-item" onclick="toggleSideNav(this)">
+              <span class="material-icons pni-icon">psychology</span>
+              <span class="pni-label">AI服務</span>
+              <span class="material-icons pni-chevron">expand_more</span>
+            </div>
+            <div class="platform-nav-sub">
+              <a class="platform-nav-sub-item" href="#">模型管理</a>
+            </div>
+
+            <!-- 日誌 -->
+            <div class="platform-nav-item" onclick="toggleSideNav(this)">
+              <span class="material-icons pni-icon">assignment</span>
+              <span class="pni-label">日誌</span>
+              <span class="material-icons pni-chevron">expand_more</span>
+            </div>
+            <div class="platform-nav-sub">
+              <a class="platform-nav-sub-item" href="#">系統日誌</a>
+            </div>
+
+            <!-- 映像檔 (no children) -->
+            <div class="platform-nav-item">
+              <span class="material-icons pni-icon">image</span>
+              <span class="pni-label">映像檔</span>
+            </div>
+
+            <!-- 維運助手 (highlighted, no children) -->
+            <div class="platform-nav-item" style="color:var(--primary)">
+              <span class="material-icons pni-icon">build_circle</span>
+              <span class="pni-label">維運助手</span>
+            </div>
+
+            <!-- Version -->
+            <div class="platform-sidenav-footer">v1.2.0</div>
+          </nav>
+
+          <!-- State callouts -->
+          <div style="padding:20px;flex:1;display:flex;flex-direction:column;gap:16px;background:var(--bg-surface-dim)">
+            <div class="demo-label" style="margin:0">States</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;align-items:center;gap:10px">
+                <div class="platform-nav-item active" style="width:180px;pointer-events:none">
+                  <span class="material-icons pni-icon">hub</span>
+                  <span class="pni-label">Selected</span>
+                </div>
+                <span style="font-size:12px;color:var(--text-medium)">Active · bg comp-hover · border primary</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px">
+                <div class="platform-nav-item" style="width:180px;pointer-events:none">
+                  <span class="material-icons pni-icon">hub</span>
+                  <span class="pni-label">Inactive</span>
+                </div>
+                <span style="font-size:12px;color:var(--text-medium)">Default · text-high</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px">
+                <div class="platform-nav-item" style="width:180px;background:var(--comp-hover);color:var(--primary);pointer-events:none">
+                  <span class="material-icons pni-icon">hub</span>
+                  <span class="pni-label">Hover</span>
+                </div>
+                <span style="font-size:12px;color:var(--text-medium)">Hover · bg comp-hover</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px">
+                <div class="platform-nav-sub-item active" style="width:180px;pointer-events:none;padding-left:12px">Sub-item Active</div>
+                <span style="font-size:12px;color:var(--text-medium)">Sub L2 · indent 44px</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title">Anatomy</div>
+        <div class="demo-box col">
+          <table class="typo-table">
+            <thead><tr><th>元素</th><th>規格</th><th>Token</th></tr></thead>
+            <tbody>
+              <tr><td>Category Header</td><td>Noto Sans TC 500 13px · 高 40px</td><td><code>primary</code></td></tr>
+              <tr><td>Nav Item 高度</td><td>40px · 左 border 2px</td><td>border: <code>primary</code> (active)</td></tr>
+              <tr><td>Nav Item Icon</td><td>Material Icons 20px · opacity 0.85</td><td><code>text-high</code> → <code>primary</code> (active)</td></tr>
+              <tr><td>Nav Item Label</td><td>Noto Sans TC 13px</td><td><code>text-high</code> → <code>primary</code> (active)</td></tr>
+              <tr><td>Active background</td><td>—</td><td><code>comp-hover</code> (#f0fbff)</td></tr>
+              <tr><td>Sub-item 高度</td><td>36px · padding-left 44px</td><td>同 Nav Item</td></tr>
+              <tr><td>版本 footer</td><td>Roboto 12px</td><td><code>primary</code></td></tr>
+              <tr><td>容器寬度</td><td>200px</td><td>border-right: <code>divider</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
     <!-- ── TYPOGRAPHY ── -->
     <section class="section" id="typography">
       <div class="section-title">Typography</div>
@@ -1275,14 +1650,22 @@ html { scroll-behavior: smooth; }
 </div>
 
 <script>
+// Platform sidenav expand/collapse
+function toggleSideNav(item) {
+  const sub = item.nextElementSibling;
+  if (!sub || !sub.classList.contains('platform-nav-sub')) return;
+  const isOpen = sub.classList.toggle('open');
+  item.classList.toggle('expanded', isOpen);
+}
+
 // Sidebar active state on scroll
 const sections = document.querySelectorAll('.section');
-const links = document.querySelectorAll('.sidebar a');
+const links = document.querySelectorAll('.page-sidenav .platform-nav-sub-item');
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
       links.forEach(l => l.classList.remove('active'));
-      const link = document.querySelector(`.sidebar a[href="#${entry.target.id}"]`);
+      const link = document.querySelector(`.page-sidenav .platform-nav-sub-item[href="#${entry.target.id}"]`);
       if (link) link.classList.add('active');
     }
   });

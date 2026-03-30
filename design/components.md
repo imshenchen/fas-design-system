@@ -32,6 +32,8 @@
 - [Drawer & Navigation](#drawer--navigation)
 - [List](#list)
 - [Menu](#menu)
+- [Navigation bar](#navigation-bar)
+- [Side menu](#side-menu)
 - [Picker](#picker)
 - [Snackbar & Toast](#snackbar--toast)
 - [Tooltip](#tooltip)
@@ -1293,6 +1295,152 @@ Text Field 依樣式與 Label 位置分為多個元件：
 
 ---
 
-> 最後更新：2026-03-27
+---
+
+## Navigation bar
+
+> **來源：** Figma `9E3JLVk3VWOESufwYQIAT2` · Node `50:18240`（開發者平台/開發者工具）
+> **用途：** 開發者平台專用的頂端導覽列，取代 DIAWorks 深色 App Bar。
+
+### 說明
+
+平台導覽列橫跨整個視窗頂端，高度固定 56px，白色背景配底部分隔線。左側放置 App Mosaic Icon 與應用程式名稱，右側提供說明文件、設定、語言切換、通知與使用者頭像五個操作入口。
+
+### 結構
+
+| 區域 | 元素 | 說明 |
+|------|------|------|
+| 左側 | App Mosaic Icon | 28×28px · 4 色方格（2×2 grid，gap 2px，border-radius 2px） |
+| 左側 | App Name | Roboto Bold 16px · letter-spacing 0.5px |
+| 右側 | Icon Button | 36×36px 圓形 · 5 種操作（help / settings / language / notification / avatar） |
+| 右側 | Language Selector | Roboto 14px · 32px 高 · border-radius 4px |
+| 右側 | User Avatar | 32×32px 圓形 · 背景 primary · 白色首字母 |
+
+### 樣式規格
+
+```css
+/* Container */
+height: 56px;
+background: var(--bg-surface);           /* #ffffff */
+border-bottom: 1px solid var(--divider); /* #d9d9d9 */
+box-shadow: 0 1px 4px rgba(46,46,46,0.08);
+padding: 0 16px;
+
+/* App Name */
+font-family: 'Roboto'; font-weight: 700; font-size: 16px;
+color: var(--text-high);                 /* #333333 */
+letter-spacing: 0.5px;
+
+/* Icon Button (default) */
+width: 36px; height: 36px; border-radius: 50%;
+color: var(--secondary);                 /* #727171 */
+background: transparent;
+
+/* Icon Button (hover) */
+background: var(--comp-hover);           /* #f0fbff */
+color: var(--primary);                   /* #00adef */
+
+/* User Avatar */
+width: 32px; height: 32px; border-radius: 50%;
+background: var(--primary);
+color: #ffffff; font-family: 'Roboto'; font-weight: 500; font-size: 13px;
+```
+
+### Token 對應
+
+| Property | Token |
+|----------|-------|
+| 背景 | `background / surface` |
+| 底線 | `divider` |
+| App Name 文字 | `text / high emphasis` |
+| Icon Button 預設色 | `secondary` |
+| Icon Button hover 背景 | `component status / hover` |
+| Icon Button hover 文字 | `primary` |
+| User Avatar 背景 | `primary` |
+
+---
+
+## Side menu
+
+> **來源：** Figma `9E3JLVk3VWOESufwYQIAT2` · Node `50:18240`（開發者平台/開發者工具）
+> **用途：** 開發者平台專用的側邊導覽選單，搭配 Platform Navigation Bar 使用。
+
+### 說明
+
+側邊導覽固定於左側，寬度 200px，白色背景配右側分隔線。支援一層展開樹狀結構（L1 → L2），上方顯示分類標題，下方顯示各功能導覽項目，底部固定顯示版本號。
+
+### Variants
+
+| Property | Values |
+|----------|--------|
+| Item Type | `Parent`（有子項，可展開） · `Leaf`（無子項，直接連結） |
+| State | `Inactive` · `Hover` · `Active`（Selected） |
+| Sub-item State | `Inactive` · `Hover` · `Active` |
+| Expanded | `True` · `False`（Parent 專屬） |
+
+### 結構
+
+| 元素 | 規格 |
+|------|------|
+| Category Header | Noto Sans TC 500 13px · `primary` · 左側小圖示 · border-bottom divider |
+| Nav Item 容器 | 高 40px · padding 0 8px 0 12px · border-left 2px（active 時顯示 primary） |
+| Nav Item Icon | Material Icons 20px · opacity 0.85 · 隨 Item 色變化 |
+| Nav Item Label | Noto Sans TC 13px |
+| Chevron | Material Icons 18px · `expand_more` · active 時旋轉 180° |
+| Sub-item 容器 | 高 36px · padding-left 44px · 背景 `bg-surface-dim` |
+| Version Footer | Roboto 12px · `primary` · border-top divider |
+
+### 樣式規格
+
+```css
+/* Sidenav Container */
+width: 200px;
+background: var(--bg-surface);
+border-right: 1px solid var(--divider);
+
+/* Nav Item (default) */
+height: 40px;
+color: var(--text-high);
+border-left: 2px solid transparent;
+font-family: 'Noto Sans TC'; font-size: 13px;
+
+/* Nav Item (hover) */
+background: var(--comp-hover);           /* #f0fbff */
+color: var(--primary);
+
+/* Nav Item (active / selected) */
+background: var(--comp-hover);
+color: var(--primary);
+border-left-color: var(--primary);
+font-weight: 500;
+
+/* Sub-item */
+height: 36px;
+padding-left: 44px;
+background: var(--bg-surface-dim);      /* #fafafa */
+
+/* Version Footer */
+font-family: 'Roboto'; font-size: 12px;
+color: var(--primary);
+```
+
+### Token 對應
+
+| Property | Token |
+|----------|-------|
+| 容器背景 | `background / surface` |
+| 右側邊線 | `divider` |
+| Item 預設文字 | `text / high emphasis` |
+| Item hover 背景 | `component status / hover` |
+| Item active 背景 | `component status / hover` |
+| Item active 文字 / icon | `primary` |
+| Item active 左側 border | `primary` |
+| Sub-item 背景 | `background / surface dim` |
+| Category Header 文字 | `primary` |
+| Version 文字 | `primary` |
+
+---
+
+> 最後更新：2026-03-30
 > 顏色數值請查閱 `token.md`，Token 名稱格式為 `分類 / 子項目`
 > 樣式規格來源：Figma Web Design Kit (Beta) — 透過 Figma MCP 直接擷取
