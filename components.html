@@ -537,7 +537,26 @@ html { scroll-behavior: smooth; }
   width: 280px; flex-shrink: 0;
   background: var(--bg-surface);
   border-right: 1px solid var(--divider);
+  transition: width .2s ease;
+  overflow: hidden;
 }
+/* Collapsed / narrow state */
+.platform-sidenav.collapsed { width: 80px; }
+.platform-sidenav.collapsed .pni-label,
+.platform-sidenav.collapsed .pni-chevron,
+.platform-sidenav.collapsed .platform-sidenav-header-label,
+.platform-sidenav.collapsed .platform-nav-sub,
+.platform-sidenav.collapsed .platform-sidenav-footer { display: none; }
+.platform-sidenav.collapsed .platform-sidenav-header { justify-content: center; padding: 0; }
+.platform-sidenav.collapsed .platform-nav-item { justify-content: center; padding: 0 8px; }
+/* Hamburger menu button */
+.platform-nav-menu-btn {
+  width: 36px; height: 36px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  border: none; background: transparent; cursor: pointer;
+  border-radius: 4px; color: var(--text-high);
+}
+.platform-nav-menu-btn:hover { background: var(--comp-hover); }
 .platform-sidenav-header {
   height: 40px; padding: 0 16px;
   font-family: 'Noto Sans TC'; font-size: 13px;
@@ -570,20 +589,24 @@ html { scroll-behavior: smooth; }
   transition: transform .2s;
 }
 .platform-nav-item.expanded .pni-chevron { transform: rotate(180deg); }
-.platform-nav-sub { background: var(--bg-surface-dim); display: none; }
+.platform-nav-sub {
+  background: var(--bg-surface);
+  display: none;
+  margin-left: 22px;
+  border-left: 2px solid var(--divider);
+}
 .platform-nav-sub.open { display: block; }
 .platform-nav-sub-item {
   display: flex; align-items: center;
-  padding: 0 12px 0 44px; height: 36px;
+  padding: 0 12px 0 22px; height: 36px;
   cursor: pointer; color: var(--text-high); font-size: 13px;
   font-family: 'Noto Sans TC'; text-decoration: none;
   transition: background .15s, color .15s;
-  border-left: 2px solid transparent;
 }
 .platform-nav-sub-item:hover { background: var(--comp-hover); color: var(--primary); }
 .platform-nav-sub-item.active {
   background: var(--comp-hover); color: var(--primary);
-  border-left-color: var(--primary); font-weight: 500;
+  font-weight: 500;
 }
 .platform-sidenav-footer {
   padding: 10px 16px;
@@ -596,6 +619,9 @@ html { scroll-behavior: smooth; }
 
 <!-- TOP NAV -->
 <nav class="platform-nav page-nav">
+  <button class="platform-nav-menu-btn" onclick="toggleSidenav()" title="展開/收折選單">
+    <span class="material-icons">menu</span>
+  </button>
   <a class="platform-nav-logo" href="#">
     <svg height="30" viewBox="0 0 84 70" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M18.55 55C18.55 55.17 18.55 55.34 18.56 55.49C18.64 57.49 19.43 59.78 21.17 61.71C22.9 63.64 25.62 65.08 29.19 65.24C29.44 65.25 29.69 65.26 29.95 65.26C34.76 65.24 39.94 63.12 44.7 59.82C44.74 59.79 44.78 59.76 44.81 59.73C46.34 60.71 48.16 61.29 50.11 61.29C55.55 61.29 59.95 56.88 59.95 51.44C59.95 48.95 59.02 46.69 57.49 44.95C58.38 42.85 58.83 40.76 58.83 38.77C58.83 35.91 57.87 33.24 55.96 31.32C54.05 29.39 51.27 28.31 48.01 28.32C47.96 28.32 47.93 28.32 47.9 28.32C40.88 28.4 33.72 32.34 28.17 37.48C22.64 42.68 18.6 49.07 18.54 54.98L18.55 55ZM30.67 40.18C35.73 35.45 42.33 32 47.94 32H48.01C50.5 32 52.22 32.77 53.37 33.92C54.51 35.08 55.17 36.72 55.18 38.79C55.18 39.97 54.96 41.27 54.48 42.64C53.16 41.99 51.68 41.61 50.12 41.61C44.68 41.61 40.27 46.02 40.27 51.45C40.27 53.58 40.95 55.55 42.1 57.16C37.93 59.97 33.49 61.62 29.95 61.61C29.76 61.61 29.56 61.61 29.37 61.6C26.66 61.46 25.01 60.48 23.89 59.27C22.78 58.06 22.27 56.5 22.23 55.35C22.23 55.22 22.23 55.11 22.23 55.01C22.17 50.89 25.59 44.88 30.69 40.18H30.67Z" fill="white"/>
@@ -627,7 +653,7 @@ html { scroll-behavior: smooth; }
   <aside class="platform-sidenav page-sidenav">
     <div class="platform-sidenav-header">
       <span class="material-icons" style="font-size:16px!important">palette</span>
-      Component Showcase
+      <span class="platform-sidenav-header-label">Component Showcase</span>
     </div>
 
     <!-- 基礎元件 -->
@@ -1648,7 +1674,13 @@ html { scroll-behavior: smooth; }
 </div>
 
 <script>
-// Platform sidenav expand/collapse
+// Toggle sidenav collapsed/expanded
+function toggleSidenav() {
+  const sidenav = document.querySelector('.platform-sidenav.page-sidenav');
+  sidenav.classList.toggle('collapsed');
+}
+
+// Platform sidenav group expand/collapse
 function toggleSideNav(item) {
   const sub = item.nextElementSibling;
   if (!sub || !sub.classList.contains('platform-nav-sub')) return;
