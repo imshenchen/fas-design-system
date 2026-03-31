@@ -30,7 +30,7 @@
   --bg-container-high: #ebebeb;
 
   --elevation-02dp: #ffffff;
-  --elevation-08dp: #f5f5f5;
+  --elevation-08dp: #ffffff;
 
   --text-white: #ffffff;
   --text-black: #000000;
@@ -53,9 +53,9 @@
   --chip-error: #fde2e4;       --chip-text-error: #bb0c15;
   --chip-milestone: #ece9f2;   --chip-text-milestone: #594677;
   --chip-idle: #ebebeb;        --chip-text-idle: #585858;
-  --chip-mariner: #dce8ff;     --chip-text-mariner: #1a3d7a;
-  --chip-moss: #e2f0d0;        --chip-text-moss: #2d4a10;
-  --chip-bronze: #f5e8d0;      --chip-text-bronze: #6b3a00;
+  --chip-mariner: #ceddf2;     --chip-text-mariner: #254f8e;
+  --chip-moss: #d5dabe;        --chip-text-moss: #5b6237;
+  --chip-bronze: #f2ddc0;      --chip-text-bronze: #7e541b;
 
   --alert-bg-error: #fef1f1;      --alert-border-error: #fccacd;   --alert-text-error: #bb0c15;
   --alert-bg-warning: #fffaeb;    --alert-border-warning: #fce8a0; --alert-text-warning: #5c4500;
@@ -64,15 +64,15 @@
 
   --divider: #d9d9d9;
   --card-outlined: #d9d9d9;
-  --switch-track-on: #81d7f5;
-  --switch-track-off: #b0b0b0;
+  --switch-track-on: rgba(0,173,239,0.38);
+  --switch-track-off: rgba(114,114,113,0.38);
   --switch-thumb-on: #00adef;
   --switch-thumb-off: #ffffff;
-  --scroll-bar: rgba(0,0,0,0.25);
+  --scroll-bar: rgba(0,0,0,0.3);
 
   /* Derived / composite tokens */
   --comp-hover-contained-error: #c82030;  /* error btn hover — darker than status-error */
-  --comp-hover-secondary: #f3f3f3;        /* secondary outlined btn hover */
+  --comp-hover-secondary: rgba(0,0,0,0.08); /* secondary outlined btn hover */
   --demo-bg-dark: #222222;               /* showcase only: dark demo box background */
 }
 
@@ -81,53 +81,55 @@
 ───────────────────────────────────────── */
 [data-theme="dark"] {
   /* Backgrounds */
-  --bg-surface: #1e1e1e;
-  --bg-surface-dim: #161616;
-  --bg-surface-dim-var: #1d1f23;
-  --bg-container-low: #2c2c2c;
-  --bg-container-high: #383838;
+  --bg-surface: #141414;
+  --bg-surface-dim: #1a1a1a;
+  --bg-surface-dim-var: #1a1a1a;
+  --bg-container-low: #262626;
+  --bg-container-high: #2e2e2e;
   --elevation-02dp: #242424;
-  --elevation-08dp: #2e2e2e;
+  --elevation-08dp: #333333;
 
   /* Text */
-  --text-high: #e8e8e8;
-  --text-body: #e8e8e8;
-  --text-medium: #a0a0a0;
-  --text-disabled: #555555;
-  --text-placeholder: #666666;
-  --secondary: #9e9e9e;
+  --text-high: #f3f3f3;
+  --text-body: #f3f3f3;
+  --text-medium: #cccccc;
+  --text-disabled: #595959;
+  --text-placeholder: #727171;
+  --secondary: #cccccc;
 
   /* Borders & Dividers */
-  --divider: #3a3a3a;
-  --card-outlined: #3a3a3a;
+  --divider: #4d4d4d;
+  --card-outlined: #4d4d4d;
 
   /* Component states */
-  --comp-hover: rgba(0,173,239,0.15);
-  --comp-hover-secondary: #2a2a2a;
-  --comp-disabled-con: #2c2c2c;
-  --comp-disabled-el: #4a4a4a;
-  --scroll-bar: rgba(255,255,255,0.2);
+  --comp-hover: rgba(255,255,255,0.08);
+  --comp-hover-secondary: rgba(255,255,255,0.08);
+  --comp-disabled-con: #3d3d3d;
+  --comp-disabled-el: #595959;
+  --scroll-bar: rgba(255,255,255,0.3);
 
   /* Switch */
-  --switch-track-off: #555555;
+  --switch-track-on: rgba(194,238,255,0.38);
+  --switch-track-off: #727171;
+  --switch-thumb-off: #e0e0e0;
 
   /* Alert — dark backgrounds */
-  --alert-bg-error: #2d1012;       --alert-border-error: #5c2226;
-  --alert-bg-warning: #2d2200;     --alert-border-warning: #5c4400;
-  --alert-bg-success: #162408;     --alert-border-success: #2c4810;
-  --alert-bg-processing: #0a1f2d;  --alert-border-processing: #144060;
+  --alert-bg-error: #73171b;       --alert-border-error: #5c2226;
+  --alert-bg-warning: #5c4500;     --alert-border-warning: #5c4400;
+  --alert-bg-success: #29440e;     --alert-border-success: #2c4810;
+  --alert-bg-processing: #003e57;  --alert-border-processing: #144060;
 
   /* Chip — dark backgrounds */
-  --chip-processing: #0a2535;  --chip-text-processing: #62cff4;
-  --chip-success: #0d2006;     --chip-text-success: #8fdb4a;
-  --chip-warning: #2d2200;     --chip-text-warning: #ffd04d;
-  --chip-emergency: #2d1200;   --chip-text-emergency: #ff9a5c;
-  --chip-error: #2d0a0d;       --chip-text-error: #ff6b72;
-  --chip-milestone: #1a1426;   --chip-text-milestone: #b59fd6;
-  --chip-idle: #2a2a2a;        --chip-text-idle: #aaaaaa;
-  --chip-mariner: #0e1f3d;     --chip-text-mariner: #7aaaf5;
-  --chip-moss: #131e08;        --chip-text-moss: #8fc452;
-  --chip-bronze: #2d1a00;      --chip-text-bronze: #d4955a;
+  --chip-processing: #003e57;  --chip-text-processing: #ffffff;
+  --chip-success: #29440e;     --chip-text-success: #ffffff;
+  --chip-warning: #5c4500;     --chip-text-warning: #ffffff;
+  --chip-emergency: #7b2f05;   --chip-text-emergency: #ffffff;
+  --chip-error: #73171b;       --chip-text-error: #ffffff;
+  --chip-milestone: #413357;   --chip-text-milestone: #ffffff;
+  --chip-idle: #454545;        --chip-text-idle: #ffffff;
+  --chip-mariner: #143668;     --chip-text-mariner: #ffffff;
+  --chip-moss: #3c4125;        --chip-text-moss: #ffffff;
+  --chip-bronze: #543812;      --chip-text-bronze: #ffffff;
 }
 
 /* ─────────────────────────────────────────
@@ -351,7 +353,7 @@ html { scroll-behavior: smooth; }
 .badge-wrap { position: relative; display: inline-flex; }
 .badge {
   position: absolute; top: -6px; right: -8px;
-  background: var(--primary); color: #fff;
+  background: var(--primary); color: var(--text-white);
   font-family: 'Roboto'; font-size: 10px; font-weight: 700;
   height: 18px; min-width: 18px; border-radius: 9px;
   display: flex; align-items: center; justify-content: center;
@@ -365,7 +367,7 @@ html { scroll-behavior: smooth; }
 ───────────────────────────────────────── */
 .avatar {
   display: inline-flex; align-items: center; justify-content: center;
-  border-radius: 50%; font-family: 'Roboto'; font-weight: 500; color: #fff;
+  border-radius: 50%; font-family: 'Roboto'; font-weight: 500; color: var(--text-white);
   flex-shrink: 0;
 }
 .avatar-l { width: 48px; height: 48px; font-size: 18px; }
@@ -432,7 +434,7 @@ html { scroll-behavior: smooth; }
 .switch-wrap { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
 .switch { width: 36px; height: 20px; border-radius: 10px; background: var(--switch-track-off); position: relative; transition: background .2s; }
 .switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: var(--switch-thumb-off); box-shadow: 0 1px 3px rgba(0,0,0,0.3); transition: left .2s; }
-.switch.on { background: var(--primary); }
+.switch.on { background: var(--switch-track-on); }
 .switch.on::after { left: 18px; }
 .switch.disabled { background: var(--comp-disabled-con); }
 .switch.disabled::after { background: var(--comp-disabled-el); }
@@ -514,8 +516,8 @@ html { scroll-behavior: smooth; }
   font-family: 'Roboto'; font-size: 13px; font-weight: 500;
   background: var(--bg-container-high); color: var(--text-medium);
 }
-.step-circle.active { background: var(--primary); color: #fff; }
-.step-circle.done { background: var(--status-success); color: #fff; }
+.step-circle.active { background: var(--primary); color: var(--text-white); }
+.step-circle.done { background: var(--status-success); color: var(--text-white); }
 .step-label { font-size: 12px; color: var(--text-medium); margin-left: 8px; white-space: nowrap; }
 .step-label.active { color: var(--primary); font-weight: 500; }
 .step-connector { width: 40px; height: 2px; background: var(--divider); margin: 0 4px; }
@@ -583,7 +585,7 @@ html { scroll-behavior: smooth; }
 .platform-nav-lang:hover { background: var(--comp-hover); color: var(--primary); }
 .platform-nav-avatar {
   width: 32px; height: 32px; border-radius: 50%;
-  background: var(--primary); color: #fff;
+  background: var(--primary); color: var(--text-white);
   display: inline-flex; align-items: center; justify-content: center;
   font-family: 'Roboto'; font-weight: 500; font-size: 13px;
   cursor: pointer; flex-shrink: 0; margin-left: 4px;
@@ -700,19 +702,6 @@ html { scroll-behavior: smooth; }
     <button class="platform-nav-icon-btn" id="dark-mode-btn" onclick="toggleDarkMode()" title="切換深色模式">
       <span class="material-icons">dark_mode</span>
     </button>
-    <button class="platform-nav-icon-btn" title="說明文件">
-      <span class="material-icons">help_outline</span>
-    </button>
-    <button class="platform-nav-icon-btn" title="設定">
-      <span class="material-icons">settings</span>
-    </button>
-    <button class="platform-nav-lang">En</button>
-    <div class="badge-wrap">
-      <button class="platform-nav-icon-btn" title="通知">
-        <span class="material-icons">notifications_none</span>
-      </button>
-    </div>
-    <div class="platform-nav-avatar">F</div>
   </div>
 </nav>
 
@@ -795,6 +784,8 @@ html { scroll-behavior: smooth; }
     <div class="platform-nav-sub open">
       <a class="platform-nav-sub-item" href="#typography">Typography</a>
       <a class="platform-nav-sub-item" href="#color">Color Tokens</a>
+      <a class="platform-nav-sub-item" href="#breakpoints">Breakpoints</a>
+      <a class="platform-nav-sub-item" href="#spacing">Spacing Scale</a>
     </div>
 
     <div class="platform-sidenav-footer">Web Design Kit Beta</div>
@@ -1477,7 +1468,7 @@ html { scroll-behavior: smooth; }
               <tr><td>右側</td><td>Icon Button</td><td>36×36px 圓形 · <code>secondary</code> · Hover: <code>comp-hover</code></td></tr>
               <tr><td>右側</td><td>Language Selector</td><td>Roboto 14px · 32px 高 · border-radius 4px</td></tr>
               <tr><td>右側</td><td>User Avatar</td><td>32×32px 圓形 · 背景 <code>primary</code> · 白色首字母</td></tr>
-              <tr><td>容器</td><td>Nav Bar</td><td>高 56px · 背景 <code>bg-surface</code> · border-bottom <code>divider</code></td></tr>
+              <tr><td>容器</td><td>Nav Bar</td><td>高 60px · 背景 <code>bg-surface</code> · border-bottom <code>divider</code></td></tr>
             </tbody>
           </table>
         </div>
@@ -1487,7 +1478,7 @@ html { scroll-behavior: smooth; }
     <!-- ── PLATFORM SIDE NAVIGATION ── -->
     <section class="section" id="platform-sidenav">
       <div class="section-title">Side menu</div>
-      <div class="section-desc">開發者平台的側邊導覽選單。寬度 200px，白色背景，支援一層展開的樹狀結構。選中項目以 <code>primary</code> 色與淺藍底色標示，底部顯示版本資訊。</div>
+      <div class="section-desc">開發者平台的側邊導覽選單。寬度 280px，白色背景，支援一層展開的樹狀結構。選中項目以 <code>primary</code> 色與淺藍底色標示，底部顯示版本資訊。</div>
 
       <div class="subsection">
         <div class="subsection-title">Interactive Demo</div>
@@ -1635,7 +1626,7 @@ html { scroll-behavior: smooth; }
               <tr><td>Active background</td><td>—</td><td><code>comp-hover</code> (#f0fbff)</td></tr>
               <tr><td>Sub-item 高度</td><td>36px · padding-left 44px</td><td>同 Nav Item</td></tr>
               <tr><td>版本 footer</td><td>Roboto 12px</td><td><code>primary</code></td></tr>
-              <tr><td>容器寬度</td><td>200px</td><td>border-right: <code>divider</code></td></tr>
+              <tr><td>容器寬度</td><td>280px</td><td>border-right: <code>divider</code></td></tr>
             </tbody>
           </table>
         </div>
@@ -1724,16 +1715,159 @@ html { scroll-behavior: smooth; }
         </div>
         <!-- Text -->
         <div style="display:flex;flex-direction:column;gap:4px;align-items:center">
-          <div style="width:56px;height:56px;border-radius:4px;background:var(--text-high);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-family:'Roboto'">Aa</div>
+          <div style="width:56px;height:56px;border-radius:4px;background:var(--text-high);display:flex;align-items:center;justify-content:center;color:var(--text-white);font-size:10px;font-family:'Roboto'">Aa</div>
           <span style="font-size:10px;color:var(--text-medium);font-family:'Roboto'">text-high</span>
         </div>
         <div style="display:flex;flex-direction:column;gap:4px;align-items:center">
-          <div style="width:56px;height:56px;border-radius:4px;background:var(--text-medium);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-family:'Roboto'">Aa</div>
+          <div style="width:56px;height:56px;border-radius:4px;background:var(--text-medium);display:flex;align-items:center;justify-content:center;color:var(--text-white);font-size:10px;font-family:'Roboto'">Aa</div>
           <span style="font-size:10px;color:var(--text-medium);font-family:'Roboto'">text-medium</span>
         </div>
         <div style="display:flex;flex-direction:column;gap:4px;align-items:center">
-          <div style="width:56px;height:56px;border-radius:4px;background:var(--text-disabled);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-family:'Roboto'">Aa</div>
+          <div style="width:56px;height:56px;border-radius:4px;background:var(--text-disabled);display:flex;align-items:center;justify-content:center;color:var(--text-white);font-size:10px;font-family:'Roboto'">Aa</div>
           <span style="font-size:10px;color:var(--text-medium);font-family:'Roboto'">text-disabled</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── BREAKPOINTS ── -->
+    <section class="section" id="breakpoints">
+      <div class="section-title">Breakpoints</div>
+      <div class="section-desc">從 Figma 框架尺寸推導出五個斷點，涵蓋 Mobile → Desktop HD。所有版面行為以此為依據進行響應式設計。</div>
+
+      <div class="subsection">
+        <div class="subsection-title">斷點範圍</div>
+        <div class="demo-box col">
+          <div style="width:100%;display:flex;flex-direction:column;gap:8px">
+            <!-- XS -->
+            <div style="display:flex;align-items:center;gap:12px">
+              <div style="width:72px;flex-shrink:0;font-family:'Roboto';font-size:12px;font-weight:500;color:var(--text-high)">XS</div>
+              <div style="flex:1;position:relative;height:28px;border-radius:4px;background:var(--bg-container-high);overflow:hidden">
+                <div style="position:absolute;left:0;top:0;height:100%;width:8%;background:var(--status-milestone);border-radius:4px;opacity:.7"></div>
+              </div>
+              <div style="width:180px;flex-shrink:0;font-family:'Roboto';font-size:12px;color:var(--text-medium)">Mobile · &lt; 768px</div>
+            </div>
+            <!-- SM -->
+            <div style="display:flex;align-items:center;gap:12px">
+              <div style="width:72px;flex-shrink:0;font-family:'Roboto';font-size:12px;font-weight:500;color:var(--text-high)">SM</div>
+              <div style="flex:1;position:relative;height:28px;border-radius:4px;background:var(--bg-container-high);overflow:hidden">
+                <div style="position:absolute;left:8%;top:0;height:100%;width:13%;background:var(--primary);border-radius:0;opacity:.6"></div>
+              </div>
+              <div style="width:180px;flex-shrink:0;font-family:'Roboto';font-size:12px;color:var(--text-medium)">Tablet · 768px – 1023px</div>
+            </div>
+            <!-- MD -->
+            <div style="display:flex;align-items:center;gap:12px">
+              <div style="width:72px;flex-shrink:0;font-family:'Roboto';font-size:12px;font-weight:500;color:var(--text-high)">MD</div>
+              <div style="flex:1;position:relative;height:28px;border-radius:4px;background:var(--bg-container-high);overflow:hidden">
+                <div style="position:absolute;left:21%;top:0;height:100%;width:13%;background:var(--primary);border-radius:0;opacity:.75"></div>
+              </div>
+              <div style="width:180px;flex-shrink:0;font-family:'Roboto';font-size:12px;color:var(--text-medium)">Laptop · 1024px – 1279px</div>
+            </div>
+            <!-- LG -->
+            <div style="display:flex;align-items:center;gap:12px">
+              <div style="width:72px;flex-shrink:0;font-family:'Roboto';font-size:12px;font-weight:500;color:var(--text-high)">LG</div>
+              <div style="flex:1;position:relative;height:28px;border-radius:4px;background:var(--bg-container-high);overflow:hidden">
+                <div style="position:absolute;left:34%;top:0;height:100%;width:33%;background:var(--primary);border-radius:0;opacity:.85"></div>
+              </div>
+              <div style="width:180px;flex-shrink:0;font-family:'Roboto';font-size:12px;color:var(--text-medium)">Desktop · 1280px – 1919px</div>
+            </div>
+            <!-- XL -->
+            <div style="display:flex;align-items:center;gap:12px">
+              <div style="width:72px;flex-shrink:0;font-family:'Roboto';font-size:12px;font-weight:500;color:var(--text-high)">XL</div>
+              <div style="flex:1;position:relative;height:28px;border-radius:4px;background:var(--bg-container-high);overflow:hidden">
+                <div style="position:absolute;left:67%;top:0;height:100%;width:33%;background:var(--primary);border-radius:0 4px 4px 0"></div>
+              </div>
+              <div style="width:180px;flex-shrink:0;font-family:'Roboto';font-size:12px;color:var(--text-medium)">Desktop HD · ≥ 1920px</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title">版面行為</div>
+        <div class="demo-box col" style="padding:0;overflow:hidden">
+          <table class="typo-table">
+            <thead><tr><th>名稱</th><th>寬度</th><th>版面行為</th></tr></thead>
+            <tbody>
+              <tr><td><b>XS</b> — Mobile</td><td><code>&lt; 768px</code></td><td>單欄；Navigation Bar 收合；Side Menu 隱藏或 Overlay</td></tr>
+              <tr><td><b>SM</b> — Tablet</td><td><code>768px – 1023px</code></td><td>Navigation Bar 顯示；Side Menu Narrow（80px）</td></tr>
+              <tr><td><b>MD</b> — Laptop</td><td><code>1024px – 1279px</code></td><td>Side Menu Narrow（80px）；內容區全展開</td></tr>
+              <tr><td><b>LG</b> — Desktop</td><td><code>1280px – 1919px</code></td><td>Side Menu 展開（280px）；標準三欄版面</td></tr>
+              <tr><td><b>XL</b> — Desktop HD</td><td><code>≥ 1920px</code></td><td>Side Menu 展開（280px）；內容區最大 1640px</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SPACING SCALE ── -->
+    <section class="section" id="spacing">
+      <div class="section-title">Spacing Scale</div>
+      <div class="section-desc">以 <b>4px</b> 為基礎單位，所有間距均為 4 的倍數。Token 名稱採 <code>space-N</code> 格式，N 為像素值除以 4。</div>
+
+      <div class="subsection">
+        <div class="subsection-title">視覺預覽</div>
+        <div class="demo-box" style="align-items:flex-end;gap:16px;flex-wrap:wrap">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+            <div style="width:4px;background:var(--primary);border-radius:2px;height:4px"></div>
+            <span style="font-size:10px;font-family:'Roboto';color:var(--text-medium)">space-1<br/>4px</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+            <div style="width:8px;background:var(--primary);border-radius:2px;height:8px"></div>
+            <span style="font-size:10px;font-family:'Roboto';color:var(--text-medium)">space-2<br/>8px</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+            <div style="width:12px;background:var(--primary);border-radius:2px;height:12px"></div>
+            <span style="font-size:10px;font-family:'Roboto';color:var(--text-medium)">space-3<br/>12px</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+            <div style="width:16px;background:var(--primary);border-radius:2px;height:16px"></div>
+            <span style="font-size:10px;font-family:'Roboto';color:var(--text-medium)">space-4<br/>16px</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+            <div style="width:20px;background:var(--primary);border-radius:2px;height:20px"></div>
+            <span style="font-size:10px;font-family:'Roboto';color:var(--text-medium)">space-5<br/>20px</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+            <div style="width:24px;background:var(--primary);border-radius:2px;height:24px"></div>
+            <span style="font-size:10px;font-family:'Roboto';color:var(--text-medium)">space-6<br/>24px</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+            <div style="width:28px;background:var(--primary);border-radius:2px;height:28px"></div>
+            <span style="font-size:10px;font-family:'Roboto';color:var(--text-medium)">space-7<br/>28px</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+            <div style="width:32px;background:var(--primary);border-radius:2px;height:32px"></div>
+            <span style="font-size:10px;font-family:'Roboto';color:var(--text-medium)">space-8<br/>32px</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+            <div style="width:40px;background:var(--primary);border-radius:2px;height:40px"></div>
+            <span style="font-size:10px;font-family:'Roboto';color:var(--text-medium)">space-10<br/>40px</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+            <div style="width:48px;background:var(--primary);border-radius:2px;height:48px"></div>
+            <span style="font-size:10px;font-family:'Roboto';color:var(--text-medium)">space-12<br/>48px</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title">使用情境對照</div>
+        <div class="demo-box col" style="padding:0;overflow:hidden">
+          <table class="typo-table">
+            <thead><tr><th>Token</th><th>值</th><th>常見使用情境</th></tr></thead>
+            <tbody>
+              <tr><td><code>space-1</code></td><td>4px</td><td>元件內微間距（icon gap）</td></tr>
+              <tr><td><code>space-2</code></td><td>8px</td><td>元件內標準間距</td></tr>
+              <tr><td><code>space-3</code></td><td>12px</td><td>Side Menu padding、item spacing、元件間 gap</td></tr>
+              <tr><td><code>space-4</code></td><td>16px</td><td>元件間距、清單間距</td></tr>
+              <tr><td><code>space-5</code></td><td>20px</td><td>Navigation Bar 水平 padding</td></tr>
+              <tr><td><code>space-6</code></td><td>24px</td><td>Card / Demo Box padding</td></tr>
+              <tr><td><code>space-7</code></td><td>28px</td><td>Sub-section 間距</td></tr>
+              <tr><td><code>space-8</code></td><td>32px</td><td>Main Content padding、Section 標題下間距</td></tr>
+              <tr><td><code>space-10</code></td><td>40px</td><td>—</td></tr>
+              <tr><td><code>space-12</code></td><td>48px</td><td>Section 間距（<code>margin-bottom</code>）</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </section>

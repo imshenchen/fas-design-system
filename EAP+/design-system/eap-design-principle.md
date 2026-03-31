@@ -3,7 +3,7 @@
 > **適用對象：** AI Agent / Prompt System
 > **產品情境：** EAP — 工廠內部機聯網系統（Edge Application Platform）
 > **主要使用者：** 系統整合商（SI）、維運人員
-> **設計系統參照：** `token.md` · `components.md` · `layout.md`
+> **設計系統參照：** `token.md` · `components.md`
 
 ---
 
@@ -137,7 +137,7 @@
 **EAP 對應：**
 - 所有元件必須來自 `components.md`，不得自行實作外觀相似但規格不同的替代版本
 - 相同語意的操作使用相同的元件與 Token，例如「主要行動」固定使用 Contained Button + `primary` Token
-- 頁面佈局遵循 `layout.md` 定義的版面結構（Navigation Bar + Side Menu + Main Content）
+- 頁面佈局遵循 `components.md` 定義的版面結構（Navigation Bar + Side Menu + Main Content）
 
 ---
 
@@ -234,9 +234,9 @@
 - 若現有元件可滿足需求，必須使用；不得因為視覺需求不同就自行實作
 - 元件的 Variant 與 State 必須符合 `components.md` 的定義（如 Button 的 Contained / Outlined / Text）
 
-### Layout（`layout.md`）
+### Layout（`components.md`）
 - 頁面必須採用「Navigation Bar（60px） + Side Menu（280px / 80px） + Main Content（flex:1）」三段式結構
-- 間距使用 `layout.md` 定義的 Spacing Scale（4px 基礎單位）
+- 間距使用 `components.md` 定義的 Spacing Scale（4px 基礎單位）
 - Section 間距 48px、Sub-section 間距 28px、Content padding 32px
 
 ---
@@ -248,7 +248,7 @@
 - [ ] 此 UI 對應了至少一條核心原則（Batch / Inheritance / Observability）
 - [ ] 所有元件來自 `components.md`，無自行創造的替代品
 - [ ] 所有顏色、間距引用 `token.md` 的 Token，無硬編碼值
-- [ ] 頁面佈局符合 `layout.md` 的版面結構與 Spacing Scale
+- [ ] 頁面佈局符合 `components.md` 的版面結構與 Spacing Scale
 - [ ] 非同步操作有進度回饋（H1）
 - [ ] 錯誤訊息包含：發生什麼、原因、建議行動（H9）
 - [ ] 破壞性操作有二次確認且使用 Error 語意（H3）
@@ -258,4 +258,4 @@
 ---
 
 > 最後更新：2026-03-30
-> 本文件為 AI Agent 的 system prompt 參照，與 `token.md`、`components.md`、`layout.md` 共同構成 EAP 設計系統的完整規範。
+> 本文件為 AI Agent 的 system prompt 參照，與 `token.md`、`components.md` 共同構成 EAP 設計系統的完整規範。
