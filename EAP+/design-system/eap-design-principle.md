@@ -235,9 +235,58 @@
 - 元件的 Variant 與 State 必須符合 `components.md` 的定義（如 Button 的 Contained / Outlined / Text）
 
 ### Layout（`components.md`）
-- 頁面必須採用「Navigation Bar（60px） + Side Menu（280px / 80px） + Main Content（flex:1）」三段式結構
-- 間距使用 `components.md` 定義的 Spacing Scale（4px 基礎單位）
-- Section 間距 48px、Sub-section 間距 28px、Content padding 32px
+
+#### 三段式版面是強制規範
+
+所有 EAP+ 頁面必須採用以下三段式固定版面，不得省略或自行替換任何一段：
+
+```
+┌────────────────────────────────────────────────────┐
+│              Navigation Bar（60px，sticky）          │
+├─────────────┬──────────────────────────────────────┤
+│             │                                      │
+│  Side Menu  │         Main Content                 │
+│  280px      │         padding: 32px                │
+│  （sticky） │         overflow-y: auto             │
+│  [收折:80px]│                                      │
+│             │                                      │
+└─────────────┴──────────────────────────────────────┘
+```
+
+#### 各區域職責
+
+| 區域 | 職責 | 不該做的事 |
+|------|------|-----------|
+| **Navigation Bar** | 產品識別（Logo、App Name）、全域操作（通知、設定、語言、使用者） | 不放頁面層級的操作按鈕 |
+| **Side Menu** | 系統導覽、當前位置指示、展開/收折 | 不放內容、不放表單 |
+| **Main Content** | 頁面實際內容（Breadcrumb、工具列、資料區） | 不自行實作 NavBar 或 SideMenu |
+
+#### 責任切分：Shell 與 Page 分離
+
+版面 Shell（Navigation Bar + Side Menu）由 **`AppShell` 元件**統一負責渲染，個別 Page 元件只負責 Main Content 內的內容，**不重複渲染 NavBar 或 SideMenu**。
+
+```
+App
+└── AppShell              ← 渲染 NavBar + SideMenu + 捲動容器
+    └── {Page}            ← 只渲染 Main Content 內部的結構
+        ├── PageHeader    ← Breadcrumb（左）+ 操作按鈕（右）
+        └── PageBody      ← 功能主體（表格、表單、卡片等）
+```
+
+#### Main Content 內部結構規範
+
+每個 Page 元件的頂層結構固定為 **PageHeader + PageBody**：
+
+- **PageHeader**：左側 Breadcrumbs、右側主要操作按鈕（最多 2 個 CTA）
+- **PageBody**：功能主體，垂直排列各 Section，Section 間距 `48px`
+- 整體 padding：`32px`；Sub-section 間距：`28px`
+
+#### 間距規範
+
+- Main Content padding：`32px`
+- Section `margin-bottom`：`48px`
+- Sub-section `margin-bottom`：`28px`
+- 元件間 gap：`12px`（使用 `components.md` Spacing Scale）
 
 ---
 
@@ -245,15 +294,24 @@
 
 生成任何頁面或元件組合前，逐項確認：
 
+**版面結構**
+- [ ] 頁面使用 `AppShell` 包覆，包含 NavigationBar + SideMenu
+- [ ] Page 元件只渲染 Main Content 內容，未重複渲染 NavBar 或 SideMenu
+- [ ] PageHeader 包含 Breadcrumbs（左）與操作按鈕（右），CTA 不超過 2 個
+- [ ] 間距符合 Spacing Scale：Content padding 32px、Section 48px、Sub-section 28px
+
+**元件與 Token**
 - [ ] 此 UI 對應了至少一條核心原則（Batch / Inheritance / Observability）
 - [ ] 所有元件來自 `components.md`，無自行創造的替代品
 - [ ] 所有顏色、間距引用 `token.md` 的 Token，無硬編碼值
-- [ ] 頁面佈局符合 `components.md` 的版面結構與 Spacing Scale
+
+**互動與狀態**
 - [ ] 非同步操作有進度回饋（H1）
 - [ ] 錯誤訊息包含：發生什麼、原因、建議行動（H9）
 - [ ] 破壞性操作有二次確認且使用 Error 語意（H3）
 - [ ] 批量操作執行前顯示影響範圍（H3 + Batch）
 - [ ] 狀態顯示使用 Status Chip，語意符合 Token 定義（H1 + H4）
+- [ ] 頁面有 loading、error、empty 三種狀態處理
 
 ---
 

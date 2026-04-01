@@ -1,0 +1,1675 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SIE — 節點管理</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+<style>
+/* ─────────────────────────────────────────
+   DESIGN TOKENS (from token.md)
+───────────────────────────────────────── */
+:root {
+  --delta-blue: #0087dc;
+  --primary: #00adef;
+  --secondary: #727171;
+
+  --status-processing: #00adef;
+  --status-success: #68ad23;
+  --status-warning: #f5b900;
+  --status-emergency: #f66d20;
+  --status-error: #f23a43;
+  --status-milestone: #8a74ad;
+  --status-idle: #808080;
+
+  --bg-surface: #ffffff;
+  --bg-surface-dim: #fafafa;
+  --bg-surface-dim-var: #f6f7f9;
+  --bg-container-low: #f3f3f3;
+  --bg-container-high: #ebebeb;
+
+  --elevation-02dp: #ffffff;
+  --elevation-08dp: #ffffff;
+  --elevation-24dp: #ffffff;
+
+  --text-white: #ffffff;
+  --text-black: #000000;
+  --text-high: #333333;
+  --text-body: #333333;
+  --text-medium: #727171;
+  --text-disabled: #bfbfbf;
+  --text-placeholder: #a6a6a6;
+
+  --comp-hover: #f0fbff;
+  --comp-hover-contained: #0088bd;
+  --comp-hover-secondary: rgba(0,0,0,0.08);
+  --comp-hover-contained-error: #c82030;
+  --comp-disabled-el: #bfbfbf;
+  --comp-disabled-con: #e6e6e6;
+  --comp-focus: rgba(0,173,239,0.12);
+
+  --chip-processing: #c2eeff;  --chip-text-processing: #00638a;
+  --chip-success: #e0fbc6;     --chip-text-success: #365912;
+  --chip-warning: #fff0c2;     --chip-text-warning: #5c4500;
+  --chip-emergency: #feece2;   --chip-text-emergency: #ac4207;
+  --chip-error: #fde2e4;       --chip-text-error: #bb0c15;
+  --chip-milestone: #ece9f2;   --chip-text-milestone: #594677;
+  --chip-idle: #ebebeb;        --chip-text-idle: #585858;
+
+  --alert-bg-error: #fef1f1;      --alert-border-error: #fccacd;   --alert-text-error: #bb0c15;
+  --alert-bg-warning: #fffaeb;    --alert-border-warning: #ffe48f; --alert-text-warning: #5c4500;
+  --alert-bg-success: #effbe2;    --alert-border-success: #c6f0a0; --alert-text-success: #365912;
+  --alert-bg-processing: #f0fbff; --alert-border-processing: #a8e6ff; --alert-text-processing: #00638a;
+
+  --divider: #d9d9d9;
+  --card-outlined: #d9d9d9;
+  --scrim: rgba(0,0,0,0.7);
+  --scroll-bar: rgba(0,0,0,0.3);
+
+  --textfield-border: #727171;
+  --textfield-border-hover: #808080;
+
+  --table-striped: #f6f7f9;
+  --table-selected: #e0f7ff;
+
+  --snackbar-bg: #333333;
+  --snackbar-success: #82d52f;
+  --snackbar-error: #f56b71;
+  --snackbar-action: #57cfff;
+}
+
+/* ─────────────────────────────────────────
+   DARK MODE OVERRIDES
+───────────────────────────────────────── */
+[data-theme="dark"] {
+  --primary: #57cfff;
+  --secondary: #cccccc;
+  --bg-surface: #141414;
+  --bg-surface-dim: #1a1a1a;
+  --bg-surface-dim-var: #1a1a1a;
+  --bg-container-low: #262626;
+  --bg-container-high: #2e2e2e;
+  --elevation-02dp: #242424;
+  --elevation-08dp: #333333;
+  --elevation-24dp: #383838;
+  --text-high: #f3f3f3;
+  --text-body: #f3f3f3;
+  --text-medium: #cccccc;
+  --text-disabled: #595959;
+  --text-placeholder: #727171;
+  --divider: #4d4d4d;
+  --card-outlined: #4d4d4d;
+  --comp-hover: rgba(255,255,255,0.08);
+  --comp-hover-secondary: rgba(255,255,255,0.08);
+  --comp-disabled-con: #3d3d3d;
+  --comp-disabled-el: #595959;
+  --scroll-bar: rgba(255,255,255,0.3);
+  --textfield-border: #808080;
+  --textfield-border-hover: #a3a3a3;
+  --table-striped: #262626;
+  --table-selected: #00638a;
+  --snackbar-bg: #ffffff;
+  --chip-processing: #003e57;  --chip-text-processing: #ffffff;
+  --chip-success: #29440e;     --chip-text-success: #ffffff;
+  --chip-error: #73171b;       --chip-text-error: #ffffff;
+  --chip-idle: #454545;        --chip-text-idle: #ffffff;
+  --alert-bg-error: #73171b;   --alert-border-error: #5c2226;
+}
+
+/* ─────────────────────────────────────────
+   BASE
+───────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Noto Sans TC', 'Roboto', sans-serif;
+  background: var(--bg-surface-dim);
+  color: var(--text-body);
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-thumb { background: var(--scroll-bar); border-radius: 3px; }
+
+/* ─────────────────────────────────────────
+   NAVIGATION BAR
+───────────────────────────────────────── */
+.platform-nav {
+  position: sticky; top: 0; z-index: 100;
+  height: 60px;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--divider);
+  padding: 0 20px;
+  display: flex; align-items: center; gap: 12px;
+}
+.nav-hamburger {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: transparent; border: none; cursor: pointer;
+  color: var(--secondary);
+  display: flex; align-items: center; justify-content: center;
+}
+.nav-hamburger:hover { background: var(--comp-hover); color: var(--primary); }
+.nav-logo {
+  display: flex; align-items: center; gap: 8px;
+  text-decoration: none;
+}
+.nav-logo-icon {
+  width: 30px; height: 30px;
+  background: var(--primary);
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-white); font-family: 'Roboto'; font-weight: 700; font-size: 14px;
+}
+.nav-app-name {
+  font-family: 'Roboto'; font-weight: 700; font-size: 16px;
+  color: var(--text-high); letter-spacing: 0.5px;
+}
+.nav-actions {
+  margin-left: auto;
+  display: flex; align-items: center; gap: 4px;
+}
+.nav-icon-btn {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: transparent; border: none; cursor: pointer;
+  color: var(--secondary);
+  display: flex; align-items: center; justify-content: center;
+}
+.nav-icon-btn:hover { background: var(--comp-hover); color: var(--primary); }
+.nav-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--primary); color: #ffffff;
+  font-family: 'Roboto'; font-weight: 500; font-size: 13px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; margin-left: 4px;
+}
+.nav-theme-btn {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: transparent; border: none; cursor: pointer;
+  color: var(--secondary);
+  display: flex; align-items: center; justify-content: center;
+}
+.nav-theme-btn:hover { background: var(--comp-hover); color: var(--primary); }
+
+/* ─────────────────────────────────────────
+   PAGE LAYOUT
+───────────────────────────────────────── */
+.page { display: flex; min-height: calc(100vh - 60px); }
+
+/* ─────────────────────────────────────────
+   SIDE MENU
+───────────────────────────────────────── */
+.platform-sidenav {
+  width: 280px;
+  min-height: calc(100vh - 60px);
+  background: var(--bg-surface);
+  border-right: 1px solid var(--divider);
+  position: sticky; top: 60px;
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+  flex-shrink: 0;
+  transition: width .2s ease;
+  display: flex; flex-direction: column;
+}
+.platform-sidenav.collapsed { width: 80px; }
+.platform-sidenav.collapsed .nav-label,
+.platform-sidenav.collapsed .nav-chevron,
+.platform-sidenav.collapsed .sidenav-category,
+.platform-sidenav.collapsed .sidenav-footer { display: none; }
+.platform-sidenav.collapsed .nav-submenu { display: none; }
+
+.sidenav-category {
+  padding: 16px 12px 6px;
+  font-family: 'Noto Sans TC'; font-weight: 500; font-size: 13px;
+  color: var(--primary);
+  border-bottom: 1px solid var(--divider);
+  display: flex; align-items: center; gap: 6px;
+  letter-spacing: 0.3px;
+}
+.nav-item {
+  height: 40px; padding: 0 8px 0 12px;
+  display: flex; align-items: center; gap: 10px;
+  cursor: pointer; border-left: 2px solid transparent;
+  font-family: 'Noto Sans TC'; font-size: 13px;
+  color: var(--text-high); transition: background .15s;
+  user-select: none;
+}
+.nav-item:hover { background: var(--comp-hover); color: var(--primary); }
+.nav-item.active { background: var(--comp-hover); color: var(--primary); border-left-color: var(--primary); font-weight: 500; }
+.nav-item .material-icons { font-size: 20px; opacity: 0.85; flex-shrink: 0; }
+.nav-label { flex: 1; }
+.nav-chevron { font-size: 18px; transition: transform .2s; }
+.nav-item.expanded .nav-chevron { transform: rotate(180deg); }
+.nav-submenu { display: none; margin-left: 22px; border-left: 1px solid var(--divider); }
+.nav-submenu.open { display: block; }
+.nav-sub-item {
+  height: 36px; padding-left: 22px;
+  display: flex; align-items: center;
+  font-family: 'Noto Sans TC'; font-size: 13px;
+  color: var(--text-high); cursor: pointer;
+  background: var(--bg-surface);
+}
+.nav-sub-item:hover { background: var(--comp-hover); color: var(--primary); }
+.nav-sub-item.active { color: var(--primary); font-weight: 500; }
+
+.sidenav-footer {
+  margin-top: auto; padding: 12px;
+  border-top: 1px solid var(--divider);
+  font-family: 'Roboto'; font-size: 12px; color: var(--primary);
+}
+
+/* ─────────────────────────────────────────
+   MAIN CONTENT
+───────────────────────────────────────── */
+.main { flex: 1; padding: 32px; overflow: auto; }
+
+/* ─────────────────────────────────────────
+   PAGE HEADER (breadcrumb + actions)
+───────────────────────────────────────── */
+.page-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 24px;
+}
+.breadcrumb {
+  display: flex; align-items: center; gap: 4px;
+  font-family: 'Noto Sans TC'; font-size: 14px;
+}
+.breadcrumb-item {
+  color: var(--text-medium); cursor: pointer;
+}
+.breadcrumb-item:hover { color: var(--primary); }
+.breadcrumb-sep { color: var(--text-medium); font-size: 18px; }
+.breadcrumb-item.current { color: var(--text-high); font-weight: 500; cursor: default; }
+.breadcrumb-item.current:hover { color: var(--text-high); }
+
+/* ─────────────────────────────────────────
+   BUTTONS
+───────────────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  border-radius: 4px; cursor: pointer; border: none;
+  font-family: 'Roboto'; font-weight: 500; font-size: 14px; line-height: 20px;
+  white-space: nowrap; transition: background .15s, border-color .15s;
+  padding: 8px 25px; height: 40px;
+}
+.btn-contained { background: var(--primary); color: var(--text-white); border: 1px solid transparent; }
+.btn-contained:hover { background: var(--comp-hover-contained); }
+.btn-outlined { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
+.btn-outlined:hover { background: var(--comp-hover); }
+.btn-outlined.sec { border-color: var(--secondary); color: var(--secondary); }
+.btn-outlined.sec:hover { background: var(--comp-hover-secondary); }
+.btn-text { background: transparent; color: var(--primary); padding: 8px; border: 1px solid transparent; }
+.btn-text:hover { background: var(--comp-hover); }
+.btn-s { height: 36px; padding: 6px 16px; font-size: 14px; }
+.btn-xs { height: 32px; padding: 4px 12px; font-size: 13px; }
+.btn:disabled, .btn.dis {
+  background: var(--comp-disabled-con) !important;
+  color: var(--comp-disabled-el) !important;
+  border-color: transparent !important;
+  cursor: not-allowed;
+}
+.btn-outlined:disabled, .btn-outlined.dis {
+  background: transparent !important;
+  border-color: var(--comp-disabled-el) !important;
+}
+
+.btn-icon {
+  width: 36px; height: 36px; padding: 6px; border-radius: 50%;
+  color: var(--secondary); background: transparent; border: none;
+  cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+}
+.btn-icon:hover { background: var(--comp-hover); color: var(--primary); }
+.btn-icon.danger:hover { color: var(--status-error); }
+
+/* Dropdown button trigger */
+.btn-dropdown { position: relative; }
+.dropdown-menu {
+  position: absolute; top: calc(100% + 4px); right: 0;
+  background: var(--elevation-08dp);
+  border: 1px solid var(--divider);
+  border-radius: 4px;
+  min-width: 180px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  z-index: 200;
+  display: none;
+}
+.dropdown-menu.open { display: block; }
+.dropdown-item {
+  height: 40px; padding: 0 16px;
+  display: flex; align-items: center;
+  font-size: 14px; color: var(--text-high);
+  cursor: pointer; gap: 8px;
+}
+.dropdown-item:hover { background: var(--comp-hover); color: var(--primary); }
+
+/* ─────────────────────────────────────────
+   FILTER BAR
+───────────────────────────────────────── */
+.filter-bar {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 16px; flex-wrap: wrap;
+}
+.search-field {
+  position: relative; flex: 1; min-width: 240px; max-width: 360px;
+}
+.search-field .material-icons {
+  position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+  color: var(--text-medium); font-size: 20px; pointer-events: none;
+}
+.search-input {
+  width: 100%; height: 36px;
+  border: 1px solid var(--textfield-border);
+  border-radius: 4px;
+  padding: 0 12px 0 36px;
+  background: var(--bg-surface);
+  color: var(--text-high);
+  font-family: 'Noto Sans TC'; font-size: 14px;
+  outline: none;
+}
+.search-input::placeholder { color: var(--text-placeholder); }
+.search-input:hover { border-color: var(--textfield-border-hover); }
+.search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--comp-focus); }
+
+.filter-select {
+  height: 36px; padding: 0 32px 0 12px;
+  border: 1px solid var(--textfield-border);
+  border-radius: 4px;
+  background: var(--bg-surface);
+  color: var(--text-high);
+  font-family: 'Noto Sans TC'; font-size: 14px;
+  cursor: pointer; outline: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24'%3E%3Cpath fill='%23727171' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 6px center;
+}
+.filter-select:hover { border-color: var(--textfield-border-hover); }
+.filter-select:focus { border-color: var(--primary); }
+
+/* ─────────────────────────────────────────
+   DATA TABLE
+───────────────────────────────────────── */
+.table-container {
+  background: var(--bg-surface);
+  border-radius: 4px;
+  border: 1px solid var(--divider);
+  overflow: hidden;
+}
+.data-table {
+  width: 100%; border-collapse: collapse;
+  font-family: 'Noto Sans TC'; font-size: 14px;
+}
+.data-table thead tr {
+  background: var(--bg-surface-dim-var);
+  border-bottom: 1px solid var(--divider);
+}
+.data-table th {
+  padding: 0 16px; height: 48px; text-align: left;
+  font-family: 'Roboto'; font-weight: 500; font-size: 14px;
+  color: var(--text-high); white-space: nowrap;
+  border-right: 1px solid var(--divider);
+  user-select: none;
+}
+.data-table th:last-child { border-right: none; }
+.th-sortable { cursor: pointer; }
+.th-sortable:hover { color: var(--primary); }
+.th-sort-icon { font-size: 16px; vertical-align: middle; color: var(--text-medium); margin-left: 2px; }
+.th-sort-icon.active { color: var(--primary); }
+.data-table tbody tr {
+  border-bottom: 1px solid var(--divider);
+  transition: background .1s;
+}
+.data-table tbody tr:last-child { border-bottom: none; }
+.data-table tbody tr:nth-child(even) { background: var(--table-striped); }
+.data-table tbody tr:hover { background: var(--comp-hover); }
+.data-table td {
+  padding: 0 16px; height: 48px;
+  color: var(--text-body);
+  border-right: 1px solid var(--divider);
+}
+.data-table td:last-child { border-right: none; }
+.td-truncate { max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.td-actions { display: flex; align-items: center; gap: 4px; }
+
+/* Status Chip — Round */
+.chip {
+  display: inline-flex; align-items: center;
+  height: 24px; border-radius: 12px; padding: 0 8px;
+  font-family: 'Roboto'; font-weight: 400; font-size: 13px;
+  white-space: nowrap;
+}
+.chip-success { background: var(--chip-success); color: var(--chip-text-success); }
+.chip-error   { background: var(--chip-error);   color: var(--chip-text-error); }
+.chip-processing { background: var(--chip-processing); color: var(--chip-text-processing); }
+.chip-idle    { background: var(--chip-idle);    color: var(--chip-text-idle); }
+
+/* Usage status dot */
+.usage-dot {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 14px; color: var(--text-body);
+}
+.dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+.dot-active { background: var(--status-processing); }
+.dot-idle   { background: var(--status-idle); }
+
+/* ─────────────────────────────────────────
+   PAGINATION
+───────────────────────────────────────── */
+.pagination-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px;
+  border-top: 1px solid var(--divider);
+  background: var(--bg-surface);
+  font-size: 14px; color: var(--text-medium);
+}
+.pagination-controls { display: flex; align-items: center; gap: 4px; }
+.page-btn {
+  width: 32px; height: 32px; border-radius: 4px;
+  border: 1px solid var(--divider);
+  background: var(--bg-surface); color: var(--text-medium);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+}
+.page-btn:hover { border-color: var(--primary); color: var(--primary); }
+.page-btn.active { background: var(--primary); color: var(--text-white); border-color: var(--primary); }
+.page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.rows-select { display: flex; align-items: center; gap: 8px; }
+.rows-select select {
+  height: 28px; padding: 0 24px 0 8px;
+  border: 1px solid var(--divider); border-radius: 4px;
+  background: var(--bg-surface); color: var(--text-high);
+  font-size: 13px; cursor: pointer; outline: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24'%3E%3Cpath fill='%23727171' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 4px center;
+}
+
+/* ─────────────────────────────────────────
+   DIALOG
+───────────────────────────────────────── */
+.dialog-overlay {
+  position: fixed; inset: 0;
+  background: var(--scrim);
+  z-index: 300;
+  display: none;
+  align-items: center; justify-content: center;
+}
+.dialog-overlay.open { display: flex; }
+.dialog {
+  background: var(--elevation-24dp);
+  border-radius: 4px;
+  width: 480px; max-width: 90vw;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.24);
+  overflow: hidden;
+}
+.dialog-header {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--divider);
+}
+.dialog-title {
+  font-family: 'Roboto'; font-weight: 500; font-size: 18px;
+  color: var(--text-high); line-height: 26px;
+}
+.dialog-body { padding: 20px 24px; }
+.dialog-section-label {
+  font-family: 'Noto Sans TC'; font-weight: 500; font-size: 12px;
+  color: var(--text-medium); letter-spacing: 0.5px; text-transform: uppercase;
+  margin-bottom: 12px; margin-top: 20px;
+}
+.dialog-section-label:first-child { margin-top: 0; }
+.readonly-field {
+  display: flex; gap: 8px; margin-bottom: 8px; align-items: flex-start;
+}
+.readonly-label {
+  font-size: 13px; color: var(--text-medium); min-width: 100px; padding-top: 2px;
+}
+.readonly-value {
+  font-size: 14px; color: var(--text-high); font-weight: 400;
+}
+.dialog-divider { border: none; border-top: 1px solid var(--divider); margin: 16px 0; }
+
+.form-field { margin-bottom: 16px; }
+.form-label {
+  display: block; font-size: 13px; color: var(--text-medium);
+  margin-bottom: 4px; font-family: 'Noto Sans TC';
+}
+.form-label .required { color: var(--status-error); margin-left: 2px; }
+.form-input {
+  width: 100%; height: 36px;
+  border: 1px solid var(--textfield-border);
+  border-radius: 4px; padding: 0 12px;
+  background: var(--bg-surface);
+  color: var(--text-high); font-family: 'Noto Sans TC'; font-size: 14px;
+  outline: none;
+}
+.form-input:hover { border-color: var(--textfield-border-hover); }
+.form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--comp-focus); }
+.form-input.error { border-color: var(--status-error); }
+.form-textarea {
+  width: 100%; min-height: 72px;
+  border: 1px solid var(--textfield-border);
+  border-radius: 4px; padding: 8px 12px;
+  background: var(--bg-surface);
+  color: var(--text-high); font-family: 'Noto Sans TC'; font-size: 14px;
+  outline: none; resize: vertical;
+}
+.form-textarea:hover { border-color: var(--textfield-border-hover); }
+.form-textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--comp-focus); }
+.char-count {
+  text-align: right; font-size: 12px; color: var(--text-medium); margin-top: 2px;
+}
+.char-count.warn { color: var(--status-error); }
+.form-error { font-size: 12px; color: var(--status-error); margin-top: 3px; display: none; }
+.form-error.show { display: block; }
+
+.form-select {
+  width: 100%; height: 36px; padding: 0 32px 0 12px;
+  border: 1px solid var(--textfield-border);
+  border-radius: 4px;
+  background: var(--bg-surface);
+  color: var(--text-high); font-family: 'Noto Sans TC'; font-size: 14px;
+  cursor: pointer; outline: none; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24'%3E%3Cpath fill='%23727171' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 6px center;
+}
+.form-select:hover { border-color: var(--textfield-border-hover); }
+.form-select:focus { border-color: var(--primary); }
+
+.dialog-footer {
+  padding: 12px 24px 20px;
+  display: flex; align-items: center; justify-content: flex-end; gap: 8px;
+  border-top: 1px solid var(--divider);
+}
+
+/* ─────────────────────────────────────────
+   CARD
+───────────────────────────────────────── */
+.card {
+  background: var(--elevation-02dp);
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(46,46,46,0.12);
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+.card-header {
+  background: var(--bg-container-high);
+  padding: 6px 16px;
+  display: flex; align-items: center; gap: 8px;
+  min-height: 44px;
+}
+.card-title {
+  font-family: 'Roboto'; font-weight: 500; font-size: 16px;
+  color: var(--text-high); flex: 1;
+}
+.card-body { padding: 20px; }
+
+/* ─────────────────────────────────────────
+   UPLOADER
+───────────────────────────────────────── */
+.upload-zone {
+  border: 2px dashed var(--textfield-border);
+  border-radius: 4px;
+  padding: 32px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+.upload-zone:hover, .upload-zone.dragging {
+  border-color: var(--primary);
+  background: var(--comp-hover);
+}
+.upload-icon { font-size: 40px; color: var(--text-medium); margin-bottom: 8px; }
+.upload-title { font-size: 15px; font-weight: 500; color: var(--text-high); margin-bottom: 4px; }
+.upload-subtitle { font-size: 13px; color: var(--text-medium); }
+.upload-link { color: var(--primary); text-decoration: none; cursor: pointer; }
+.upload-link:hover { text-decoration: underline; }
+.upload-meta { font-size: 12px; color: var(--text-medium); margin-top: 8px; }
+.upload-actions { margin-bottom: 16px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.download-link {
+  display: inline-flex; align-items: center; gap: 4px;
+  color: var(--primary); font-size: 14px;
+  text-decoration: none; cursor: pointer;
+}
+.download-link:hover { text-decoration: underline; }
+.uploaded-file {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px; border-radius: 4px;
+  background: var(--bg-container-low);
+  margin-top: 8px;
+}
+.uploaded-file .file-name { flex: 1; font-size: 13px; color: var(--text-high); }
+.uploaded-file .file-size { font-size: 12px; color: var(--text-medium); }
+
+/* ─────────────────────────────────────────
+   EDITABLE TABLE (Manual Add)
+───────────────────────────────────────── */
+.editable-table {
+  width: 100%; border-collapse: collapse;
+  font-family: 'Noto Sans TC'; font-size: 14px;
+}
+.editable-table th {
+  padding: 0 12px; height: 44px; text-align: left;
+  background: var(--bg-surface-dim-var);
+  font-family: 'Roboto'; font-weight: 500; font-size: 13px;
+  color: var(--text-high); border-bottom: 1px solid var(--divider);
+  border-right: 1px solid var(--divider); white-space: nowrap;
+}
+.editable-table th:last-child { border-right: none; }
+.editable-table tbody tr { border-bottom: 1px solid var(--divider); }
+.editable-table tbody tr:last-child { border-bottom: none; }
+.editable-table td {
+  padding: 8px 12px; vertical-align: middle;
+  border-right: 1px solid var(--divider); color: var(--text-body);
+}
+.editable-table td:last-child { border-right: none; }
+.editable-table .row-num {
+  width: 40px; text-align: center;
+  color: var(--text-medium); font-size: 13px;
+}
+.editable-table .cell-input {
+  width: 100%; height: 32px;
+  border: 1px solid var(--textfield-border);
+  border-radius: 4px; padding: 0 8px;
+  background: var(--bg-surface);
+  color: var(--text-high); font-size: 14px; font-family: 'Noto Sans TC';
+  outline: none;
+}
+.editable-table .cell-input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px var(--comp-focus); }
+.editable-table .cell-input.error { border-color: var(--status-error); }
+.editable-table .cell-select {
+  width: 100%; height: 32px; padding: 0 24px 0 8px;
+  border: 1px solid var(--textfield-border);
+  border-radius: 4px;
+  background: var(--bg-surface); color: var(--text-high);
+  font-size: 14px; font-family: 'Noto Sans TC';
+  cursor: pointer; outline: none; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24'%3E%3Cpath fill='%23727171' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 4px center;
+}
+.editable-table .cell-select:focus { border-color: var(--primary); }
+.row-confirmed td { background: var(--bg-surface); }
+.row-confirmed .cell-value { font-size: 14px; color: var(--text-high); }
+.row-error-hint { font-size: 11px; color: var(--status-error); margin-top: 2px; }
+
+/* ─────────────────────────────────────────
+   TOAST / SNACKBAR
+───────────────────────────────────────── */
+.toast-container {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  z-index: 500; display: flex; flex-direction: column; gap: 8px;
+  align-items: center; pointer-events: none;
+}
+.toast {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--snackbar-bg);
+  color: var(--text-white);
+  border-radius: 4px;
+  padding: 12px 16px;
+  min-width: 280px; max-width: 480px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.24);
+  font-size: 14px;
+  animation: toastIn .2s ease;
+  pointer-events: auto;
+}
+@keyframes toastIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.toast-icon { font-size: 20px; flex-shrink: 0; }
+.toast-icon.success { color: var(--snackbar-success); }
+.toast-icon.error { color: var(--snackbar-error); }
+.toast-msg { flex: 1; }
+
+/* ─────────────────────────────────────────
+   VIEW TOGGLE
+───────────────────────────────────────── */
+.view { display: none; }
+.view.active { display: block; }
+
+/* ─────────────────────────────────────────
+   EMPTY STATE
+───────────────────────────────────────── */
+.empty-state {
+  text-align: center; padding: 48px 24px;
+  color: var(--text-medium);
+}
+.empty-state .material-icons { font-size: 48px; opacity: 0.4; margin-bottom: 12px; }
+.empty-state p { font-size: 15px; }
+
+/* ─────────────────────────────────────────
+   ALERT (inline)
+───────────────────────────────────────── */
+.alert-inline {
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 10px 10px 10px 16px;
+  border-radius: 4px; margin-bottom: 16px;
+}
+.alert-inline.error {
+  background: var(--alert-bg-error);
+  border: 1px solid var(--alert-border-error);
+  color: var(--alert-text-error);
+}
+.alert-inline .material-icons { font-size: 20px; margin-top: 2px; flex-shrink: 0; }
+
+/* ─────────────────────────────────────────
+   SECTION INFO TEXT
+───────────────────────────────────────── */
+.info-text {
+  font-size: 13px; color: var(--text-medium);
+  margin-bottom: 12px; line-height: 1.6;
+}
+
+/* ─────────────────────────────────────────
+   DELETE CONFIRM DIALOG
+───────────────────────────────────────── */
+.delete-dialog-overlay {
+  position: fixed; inset: 0;
+  background: var(--scrim);
+  z-index: 300;
+  display: none;
+  align-items: center; justify-content: center;
+}
+.delete-dialog-overlay.open { display: flex; }
+.delete-dialog {
+  background: var(--elevation-24dp);
+  border-radius: 4px; width: 400px; max-width: 90vw;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.24);
+  overflow: hidden;
+}
+.delete-dialog-header {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--divider);
+  font-family: 'Roboto'; font-weight: 500; font-size: 18px;
+  color: var(--text-high);
+  display: flex; align-items: center; gap: 8px;
+}
+.delete-dialog-header .material-icons { color: var(--status-error); font-size: 22px; }
+.delete-dialog-body { padding: 16px 24px; font-size: 14px; color: var(--text-body); line-height: 1.6; }
+.delete-dialog-footer {
+  padding: 12px 24px 20px;
+  display: flex; justify-content: flex-end; gap: 8px;
+  border-top: 1px solid var(--divider);
+}
+.btn-contained.err { background: var(--status-error); }
+.btn-contained.err:hover { background: var(--comp-hover-contained-error); }
+</style>
+</head>
+<body>
+
+<!-- ─── NAVIGATION BAR ─── -->
+<nav class="platform-nav">
+  <button class="nav-hamburger" onclick="toggleSidenav()" aria-label="切換選單">
+    <span class="material-icons" style="font-size:22px">menu</span>
+  </button>
+  <a class="nav-logo" href="#">
+    <div class="nav-logo-icon">S</div>
+    <span class="nav-app-name">SIE Console</span>
+  </a>
+  <div class="nav-actions">
+    <button class="nav-theme-btn" onclick="toggleTheme()" title="切換主題">
+      <span class="material-icons" id="theme-icon" style="font-size:20px">dark_mode</span>
+    </button>
+    <button class="nav-icon-btn" title="說明文件">
+      <span class="material-icons" style="font-size:20px">help_outline</span>
+    </button>
+    <button class="nav-icon-btn" title="設定">
+      <span class="material-icons" style="font-size:20px">settings</span>
+    </button>
+    <button class="nav-icon-btn" title="通知">
+      <span class="material-icons" style="font-size:20px">notifications_none</span>
+    </button>
+    <div class="nav-avatar" title="使用者">A</div>
+  </div>
+</nav>
+
+<!-- ─── PAGE LAYOUT ─── -->
+<div class="page">
+
+  <!-- ─── SIDE MENU ─── -->
+  <aside class="platform-sidenav" id="sidenav">
+    <div class="sidenav-category">
+      <span class="material-icons" style="font-size:16px">hub</span>
+      節點管理
+    </div>
+    <div class="nav-item" onclick="toggleSubMenu(this)">
+      <span class="material-icons">account_tree</span>
+      <span class="nav-label">多節點管理</span>
+      <span class="material-icons nav-chevron">expand_more</span>
+    </div>
+    <div class="nav-submenu open" id="node-submenu">
+      <div class="nav-sub-item" onclick="showView('list-view')">節點列表</div>
+      <div class="nav-sub-item active" id="nav-candidate" onclick="showView('candidate-view')">添加自候選節點清單</div>
+      <div class="nav-sub-item" id="nav-manual" onclick="showView('manual-view')">手動添加節點</div>
+    </div>
+    <div class="nav-item">
+      <span class="material-icons">device_hub</span>
+      <span class="nav-label">設備管理</span>
+    </div>
+    <div class="nav-item">
+      <span class="material-icons">apps</span>
+      <span class="nav-label">應用程式</span>
+    </div>
+    <div class="nav-item">
+      <span class="material-icons">monitor_heart</span>
+      <span class="nav-label">系統監控</span>
+    </div>
+    <div class="nav-item">
+      <span class="material-icons">settings</span>
+      <span class="nav-label">系統設定</span>
+    </div>
+    <div class="sidenav-footer">EAP+ v1.4.0</div>
+  </aside>
+
+  <!-- ─── MAIN CONTENT ─── -->
+  <main class="main">
+
+    <!-- ══════════════════════════════════════
+         VIEW 1：添加自候選節點清單
+    ══════════════════════════════════════ -->
+    <div class="view active" id="candidate-view">
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <nav class="breadcrumb">
+          <span class="breadcrumb-item" onclick="showView('list-view')">多節點管理</span>
+          <span class="material-icons breadcrumb-sep" style="font-size:18px">chevron_right</span>
+          <span class="breadcrumb-item current">添加自候選節點清單</span>
+        </nav>
+        <button class="btn btn-outlined btn-s" onclick="showView('manual-view')">
+          <span class="material-icons" style="font-size:16px">edit</span>
+          手動添加節點
+        </button>
+      </div>
+
+      <!-- Filter Bar -->
+      <div class="filter-bar">
+        <div class="search-field">
+          <span class="material-icons">search</span>
+          <input type="text" class="search-input" placeholder="搜尋節點名稱、地址、連接埠" oninput="filterTable()" id="candidate-search" />
+        </div>
+        <select class="filter-select" onchange="filterTable()" id="status-filter" title="狀態篩選">
+          <option value="">所有狀態</option>
+          <option value="確定">確定</option>
+          <option value="危急">危急</option>
+        </select>
+        <select class="filter-select" onchange="filterTable()" id="usage-filter" title="使用狀態篩選">
+          <option value="">所有使用狀態</option>
+          <option value="使用中">使用中</option>
+          <option value="閒置">閒置</option>
+        </select>
+      </div>
+
+      <!-- Candidate Table -->
+      <div class="table-container">
+        <table class="data-table" id="candidate-table">
+          <thead>
+            <tr>
+              <th class="th-sortable" onclick="sortTable('name')">
+                名稱 <span class="material-icons th-sort-icon" id="sort-name">unfold_more</span>
+              </th>
+              <th class="th-sortable" onclick="sortTable('addr')">
+                地址 <span class="material-icons th-sort-icon" id="sort-addr">unfold_more</span>
+              </th>
+              <th class="th-sortable" onclick="sortTable('port')">
+                連接埠 <span class="material-icons th-sort-icon" id="sort-port">unfold_more</span>
+              </th>
+              <th class="th-sortable">
+                狀態 <span class="material-icons th-sort-icon">unfold_more</span>
+              </th>
+              <th class="th-sortable">
+                健康訊息 <span class="material-icons th-sort-icon">unfold_more</span>
+              </th>
+              <th class="th-sortable">
+                註冊 ID <span class="material-icons th-sort-icon">unfold_more</span>
+              </th>
+              <th class="th-sortable">
+                使用狀態 <span class="material-icons th-sort-icon">unfold_more</span>
+              </th>
+              <th>設定</th>
+            </tr>
+          </thead>
+          <tbody id="candidate-tbody">
+            <!-- rows injected by JS -->
+          </tbody>
+        </table>
+        <!-- Empty state -->
+        <div class="empty-state" id="candidate-empty" style="display:none">
+          <div class="material-icons">search_off</div>
+          <p>找不到符合條件的候選節點</p>
+        </div>
+        <!-- Pagination -->
+        <div class="pagination-bar">
+          <div class="rows-select">
+            <span>每頁列數：</span>
+            <select onchange="changePageSize(this.value)">
+              <option value="10" selected>10</option>
+              <option value="20">20</option>
+              <option value="50">50</option>
+            </select>
+          </div>
+          <div style="display:flex;align-items:center;gap:16px">
+            <span id="page-info">1–10 / 12</span>
+            <div class="pagination-controls">
+              <button class="page-btn" title="第一頁" onclick="goPage('first')" id="btn-first">
+                <span class="material-icons" style="font-size:18px">first_page</span>
+              </button>
+              <button class="page-btn" title="上一頁" onclick="goPage('prev')" id="btn-prev">
+                <span class="material-icons" style="font-size:18px">chevron_left</span>
+              </button>
+              <button class="page-btn active">1</button>
+              <button class="page-btn" onclick="goPage('next')">2</button>
+              <button class="page-btn" title="下一頁" onclick="goPage('next')" id="btn-next">
+                <span class="material-icons" style="font-size:18px">chevron_right</span>
+              </button>
+              <button class="page-btn" title="最後頁" onclick="goPage('last')" id="btn-last">
+                <span class="material-icons" style="font-size:18px">last_page</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /candidate-view -->
+
+
+    <!-- ══════════════════════════════════════
+         VIEW 2：手動添加節點
+    ══════════════════════════════════════ -->
+    <div class="view" id="manual-view">
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <nav class="breadcrumb">
+          <span class="breadcrumb-item" onclick="showView('list-view')">多節點管理</span>
+          <span class="material-icons breadcrumb-sep" style="font-size:18px">chevron_right</span>
+          <span class="breadcrumb-item current">手動添加節點</span>
+        </nav>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="btn btn-outlined btn-s" onclick="showView('candidate-view')">
+            <span class="material-icons" style="font-size:16px">list</span>
+            添加自候選節點清單
+          </button>
+          <button class="btn btn-contained btn-s" id="submit-btn" disabled onclick="submitNodes()">
+            <span class="material-icons" style="font-size:16px">send</span>
+            送出
+          </button>
+        </div>
+      </div>
+
+      <!-- Card A: TSV 批次匯入 -->
+      <div class="card">
+        <div class="card-header">
+          <span class="material-icons" style="color:var(--text-medium);font-size:20px">upload_file</span>
+          <span class="card-title">TSV 批次匯入</span>
+        </div>
+        <div class="card-body">
+          <div class="upload-actions">
+            <a class="download-link" href="#" onclick="downloadTemplate(event)">
+              <span class="material-icons" style="font-size:16px">download</span>
+              下載模板.tsv
+            </a>
+          </div>
+          <div class="upload-zone" id="drop-zone"
+            ondragover="event.preventDefault();this.classList.add('dragging')"
+            ondragleave="this.classList.remove('dragging')"
+            ondrop="handleDrop(event)"
+            onclick="document.getElementById('tsv-input').click()">
+            <div class="upload-icon material-icons">cloud_upload</div>
+            <div class="upload-title">拖曳 TSV 檔案至此，或</div>
+            <div class="upload-subtitle">
+              <span class="upload-link">選擇檔案</span>上傳
+            </div>
+            <div class="upload-meta">支援格式：TSV｜最大 1MB</div>
+          </div>
+          <input type="file" id="tsv-input" accept=".tsv" style="display:none" onchange="handleFileSelect(this)" />
+          <div id="uploaded-list"></div>
+          <p class="info-text" style="margin-top:12px">請上傳節點列表，或使用下面的編輯器逐筆輸入。</p>
+        </div>
+      </div>
+
+      <!-- Card B: 手動輸入列表 -->
+      <div class="card">
+        <div class="card-header">
+          <span class="material-icons" style="color:var(--text-medium);font-size:20px">table_rows</span>
+          <span class="card-title">手動輸入列表</span>
+          <span style="font-size:13px;color:var(--text-medium);margin-left:8px" id="confirmed-count"></span>
+        </div>
+        <div class="card-body" style="padding:0">
+          <div style="overflow-x:auto">
+            <table class="editable-table" id="manual-table">
+              <thead>
+                <tr>
+                  <th class="row-num">#</th>
+                  <th style="min-width:140px">*別名</th>
+                  <th style="min-width:140px">說明</th>
+                  <th style="min-width:120px">標籤</th>
+                  <th style="min-width:140px">*地址</th>
+                  <th style="min-width:100px">*連接埠</th>
+                  <th style="min-width:80px">操作</th>
+                </tr>
+              </thead>
+              <tbody id="manual-tbody">
+                <!-- rows injected by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- /manual-view -->
+
+
+    <!-- ══════════════════════════════════════
+         VIEW 3：節點列表（placeholder）
+    ══════════════════════════════════════ -->
+    <div class="view" id="list-view">
+      <div class="page-header">
+        <nav class="breadcrumb">
+          <span class="breadcrumb-item current">多節點管理</span>
+        </nav>
+        <div style="position:relative">
+          <button class="btn btn-contained" onclick="toggleDropdown('add-dropdown')">
+            <span class="material-icons" style="font-size:16px">add</span>
+            新增節點
+            <span class="material-icons" style="font-size:16px">expand_more</span>
+          </button>
+          <div class="dropdown-menu" id="add-dropdown">
+            <div class="dropdown-item" onclick="showView('candidate-view');closeDropdown()">
+              <span class="material-icons" style="font-size:18px">list</span>
+              添加自候選節點清單
+            </div>
+            <div class="dropdown-item" onclick="showView('manual-view');closeDropdown()">
+              <span class="material-icons" style="font-size:18px">edit</span>
+              手動添加節點
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>別名</th>
+              <th>地址</th>
+              <th>連接埠</th>
+              <th>狀態</th>
+              <th>使用狀態</th>
+              <th>設定</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>node-prod-01</td>
+              <td>192.168.1.101</td>
+              <td>8080</td>
+              <td><span class="chip chip-success">確定</span></td>
+              <td><span class="usage-dot"><span class="dot dot-active"></span>使用中</span></td>
+              <td>
+                <div class="td-actions">
+                  <button class="btn-icon" title="編輯"><span class="material-icons" style="font-size:18px">edit</span></button>
+                  <button class="btn-icon danger" title="移除"><span class="material-icons" style="font-size:18px">delete</span></button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>node-staging-02</td>
+              <td>192.168.1.102</td>
+              <td>8080</td>
+              <td><span class="chip chip-error">危急</span></td>
+              <td><span class="usage-dot"><span class="dot dot-idle"></span>閒置</span></td>
+              <td>
+                <div class="td-actions">
+                  <button class="btn-icon" title="編輯"><span class="material-icons" style="font-size:18px">edit</span></button>
+                  <button class="btn-icon danger" title="移除"><span class="material-icons" style="font-size:18px">delete</span></button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pagination-bar">
+          <div class="rows-select">
+            <span>每頁列數：</span>
+            <select><option>10</option></select>
+          </div>
+          <span>1–2 / 2</span>
+        </div>
+      </div>
+    </div>
+    <!-- /list-view -->
+
+  </main>
+</div>
+<!-- /page -->
+
+
+<!-- ─── DIALOG：向主節點添加節點 ─── -->
+<div class="dialog-overlay" id="add-dialog-overlay" onclick="closeAddDialog(event)">
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title">
+    <div class="dialog-header">
+      <div class="dialog-title" id="dialog-title">向主節點添加節點</div>
+    </div>
+    <div class="dialog-body">
+      <!-- Readonly info from candidate node -->
+      <div class="dialog-section-label">候選節點資訊</div>
+      <div class="readonly-field">
+        <span class="readonly-label">候選節點名稱</span>
+        <span class="readonly-value" id="d-node-name">—</span>
+      </div>
+      <div class="readonly-field">
+        <span class="readonly-label">地址</span>
+        <span class="readonly-value" id="d-addr">—</span>
+      </div>
+      <div class="readonly-field">
+        <span class="readonly-label">連接埠</span>
+        <span class="readonly-value" id="d-port">—</span>
+      </div>
+      <hr class="dialog-divider" />
+      <!-- SIE info form -->
+      <div class="dialog-section-label">SIE 節點資訊</div>
+      <div class="form-field">
+        <label class="form-label">*別名<span class="required"></span></label>
+        <input type="text" class="form-input" id="d-alias" maxlength="30"
+          placeholder="請輸入別名（最多 30 字元）"
+          oninput="updateDialogAlias()" onblur="validateAlias()" />
+        <div class="char-count" id="alias-count">0 / 30</div>
+        <div class="form-error" id="alias-error">別名為必填欄位</div>
+      </div>
+      <div class="form-field">
+        <label class="form-label">標籤</label>
+        <select class="form-select" id="d-tag">
+          <option value="">— 選擇或搜尋標籤 —</option>
+          <option>production</option>
+          <option>staging</option>
+          <option>edge-node</option>
+          <option>factory-a</option>
+          <option>factory-b</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label class="form-label">說明</label>
+        <textarea class="form-textarea" id="d-desc" maxlength="100"
+          placeholder="請輸入說明（最多 100 字元）"
+          oninput="updateDescCount()"></textarea>
+        <div class="char-count" id="desc-count">0 / 100</div>
+      </div>
+    </div>
+    <div class="dialog-footer">
+      <button class="btn btn-outlined btn-s sec" onclick="closeAddDialogDirect()">取消</button>
+      <button class="btn btn-contained btn-s" id="dialog-confirm-btn" disabled onclick="confirmAddNode()">加入</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── DIALOG：刪除候選節點確認 ─── -->
+<div class="delete-dialog-overlay" id="delete-dialog-overlay" onclick="closeDeleteDialog(event)">
+  <div class="delete-dialog">
+    <div class="delete-dialog-header">
+      <span class="material-icons">warning</span>
+      確認刪除候選節點
+    </div>
+    <div class="delete-dialog-body">
+      <p>確定要從候選節點清單中刪除節點 <strong id="delete-node-name">—</strong> 嗎？</p>
+      <p style="margin-top:8px;color:var(--text-medium);font-size:13px">此操作無法復原。</p>
+    </div>
+    <div class="delete-dialog-footer">
+      <button class="btn btn-outlined btn-s sec" onclick="closeDeleteDialogDirect()">取消</button>
+      <button class="btn btn-contained btn-s err" onclick="confirmDelete()">刪除</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── TOAST CONTAINER ─── -->
+<div class="toast-container" id="toast-container"></div>
+
+
+<script>
+/* ═══════════════════════════════════════════
+   THEME TOGGLE
+═══════════════════════════════════════════ */
+let isDark = false;
+function toggleTheme() {
+  isDark = !isDark;
+  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : '');
+  document.getElementById('theme-icon').textContent = isDark ? 'light_mode' : 'dark_mode';
+}
+
+/* ═══════════════════════════════════════════
+   SIDENAV TOGGLE
+═══════════════════════════════════════════ */
+function toggleSidenav() {
+  document.getElementById('sidenav').classList.toggle('collapsed');
+}
+function toggleSubMenu(el) {
+  el.classList.toggle('expanded');
+  const sub = el.nextElementSibling;
+  if (sub && sub.classList.contains('nav-submenu')) {
+    sub.classList.toggle('open');
+  }
+}
+
+/* ═══════════════════════════════════════════
+   VIEW MANAGEMENT
+═══════════════════════════════════════════ */
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  // update sidenav
+  document.querySelectorAll('.nav-sub-item').forEach(i => i.classList.remove('active'));
+  if (id === 'candidate-view') document.getElementById('nav-candidate').classList.add('active');
+  if (id === 'manual-view') document.getElementById('nav-manual').classList.add('active');
+  closeDropdown();
+}
+
+/* ═══════════════════════════════════════════
+   DROPDOWN
+═══════════════════════════════════════════ */
+function toggleDropdown(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+function closeDropdown() {
+  document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('open'));
+}
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.btn-dropdown') && !e.target.closest('.btn-contained')) closeDropdown();
+});
+
+/* ═══════════════════════════════════════════
+   CANDIDATE NODE DATA
+═══════════════════════════════════════════ */
+const candidateData = [
+  { name: 'edge-node-alpha',   addr: '10.0.1.10',  port: 9000, status: '確定', health: 'http://10.0.1.10:9000/health', regId: 'reg-a1b2-c3d4-e5f6', usage: '閒置' },
+  { name: 'edge-node-beta',    addr: '10.0.1.11',  port: 9001, status: '危急', health: 'http://10.0.1.11:9001/health', regId: 'reg-b2c3-d4e5-f6a7', usage: '閒置' },
+  { name: 'factory-a-node-01', addr: '192.168.2.5', port: 8080, status: '確定', health: 'http://192.168.2.5:8080/health', regId: 'reg-c3d4-e5f6-a7b8', usage: '閒置' },
+  { name: 'factory-a-node-02', addr: '192.168.2.6', port: 8080, status: '確定', health: 'http://192.168.2.6:8080/health', regId: 'reg-d4e5-f6a7-b8c9', usage: '使用中' },
+  { name: 'factory-b-node-01', addr: '192.168.3.5', port: 8080, status: '危急', health: 'http://192.168.3.5:8080/health', regId: 'reg-e5f6-a7b8-c9d0', usage: '閒置' },
+  { name: 'staging-node-01',   addr: '172.16.0.10', port: 7000, status: '確定', health: 'http://172.16.0.10:7000/health', regId: 'reg-f6a7-b8c9-d0e1', usage: '閒置' },
+  { name: 'staging-node-02',   addr: '172.16.0.11', port: 7001, status: '確定', health: 'http://172.16.0.11:7001/health', regId: 'reg-a7b8-c9d0-e1f2', usage: '閒置' },
+  { name: 'dr-node-main',      addr: '10.1.0.1',   port: 9090, status: '確定', health: 'http://10.1.0.1:9090/health', regId: 'reg-b8c9-d0e1-f2a3', usage: '閒置' },
+  { name: 'dr-node-backup',    addr: '10.1.0.2',   port: 9090, status: '危急', health: 'http://10.1.0.2:9090/health', regId: 'reg-c9d0-e1f2-a3b4', usage: '閒置' },
+  { name: 'edge-node-gamma',   addr: '10.0.2.10',  port: 9002, status: '確定', health: 'http://10.0.2.10:9002/health', regId: 'reg-d0e1-f2a3-b4c5', usage: '閒置' },
+  { name: 'edge-node-delta',   addr: '10.0.2.11',  port: 9003, status: '確定', health: 'http://10.0.2.11:9003/health', regId: 'reg-e1f2-a3b4-c5d6', usage: '使用中' },
+  { name: 'test-node-qa',      addr: '10.99.0.1',  port: 8888, status: '危急', health: 'http://10.99.0.1:8888/health', regId: 'reg-f2a3-b4c5-d6e7', usage: '閒置' },
+];
+let filteredData = [...candidateData];
+let pendingAddRow = null;
+
+function renderCandidateTable() {
+  const tbody = document.getElementById('candidate-tbody');
+  const empty = document.getElementById('candidate-empty');
+  if (filteredData.length === 0) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+  } else {
+    empty.style.display = 'none';
+    tbody.innerHTML = filteredData.map((row, i) => `
+      <tr>
+        <td>${row.name}</td>
+        <td>${row.addr}</td>
+        <td>${row.port}</td>
+        <td>
+          <span class="chip ${row.status === '確定' ? 'chip-success' : 'chip-error'}">${row.status}</span>
+        </td>
+        <td class="td-truncate" title="${row.health}">${row.health}</td>
+        <td class="td-truncate" title="${row.regId}">${row.regId}</td>
+        <td>
+          <span class="usage-dot">
+            <span class="dot ${row.usage === '使用中' ? 'dot-active' : 'dot-idle'}"></span>
+            ${row.usage}
+          </span>
+        </td>
+        <td>
+          <div class="td-actions">
+            <button class="btn-icon" title="加入節點" onclick="openAddDialog(${i})">
+              <span class="material-icons" style="font-size:18px">content_copy</span>
+            </button>
+            <button class="btn-icon danger" title="刪除候選節點" onclick="openDeleteDialog(${i})">
+              <span class="material-icons" style="font-size:18px">delete</span>
+            </button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  }
+}
+filterTable();
+
+function filterTable() {
+  const search = (document.getElementById('candidate-search').value || '').toLowerCase();
+  const status = document.getElementById('status-filter').value;
+  const usage  = document.getElementById('usage-filter').value;
+  filteredData = candidateData.filter(r => {
+    const matchSearch = !search ||
+      r.name.toLowerCase().includes(search) ||
+      r.addr.toLowerCase().includes(search) ||
+      String(r.port).includes(search);
+    const matchStatus = !status || r.status === status;
+    const matchUsage  = !usage  || r.usage === usage;
+    return matchSearch && matchStatus && matchUsage;
+  });
+  renderCandidateTable();
+  document.getElementById('page-info').textContent =
+    `1–${Math.min(10, filteredData.length)} / ${filteredData.length}`;
+}
+
+function sortTable(key) { /* simplified — visual only */ }
+function goPage(dir) { /* simplified */ }
+function changePageSize(n) { /* simplified */ }
+
+/* ═══════════════════════════════════════════
+   ADD DIALOG
+═══════════════════════════════════════════ */
+function openAddDialog(idx) {
+  const row = filteredData[idx];
+  pendingAddRow = row;
+  document.getElementById('d-node-name').textContent = row.name;
+  document.getElementById('d-addr').textContent = row.addr;
+  document.getElementById('d-port').textContent = row.port;
+  document.getElementById('d-alias').value = '';
+  document.getElementById('d-tag').value = '';
+  document.getElementById('d-desc').value = '';
+  document.getElementById('alias-count').textContent = '0 / 30';
+  document.getElementById('desc-count').textContent = '0 / 100';
+  document.getElementById('alias-error').classList.remove('show');
+  document.getElementById('dialog-confirm-btn').disabled = true;
+  document.getElementById('add-dialog-overlay').classList.add('open');
+  setTimeout(() => document.getElementById('d-alias').focus(), 50);
+}
+function closeAddDialog(e) {
+  if (e.target === document.getElementById('add-dialog-overlay')) closeAddDialogDirect();
+}
+function closeAddDialogDirect() {
+  document.getElementById('add-dialog-overlay').classList.remove('open');
+  pendingAddRow = null;
+}
+function updateDialogAlias() {
+  const val = document.getElementById('d-alias').value;
+  document.getElementById('alias-count').textContent = `${val.length} / 30`;
+  const cnt = document.getElementById('alias-count');
+  cnt.classList.toggle('warn', val.length >= 28);
+  document.getElementById('dialog-confirm-btn').disabled = val.trim().length === 0;
+  if (val.trim().length > 0) document.getElementById('alias-error').classList.remove('show');
+}
+function updateDescCount() {
+  const val = document.getElementById('d-desc').value;
+  const cnt = document.getElementById('desc-count');
+  cnt.textContent = `${val.length} / 100`;
+  cnt.classList.toggle('warn', val.length >= 90);
+}
+function validateAlias() {
+  const val = document.getElementById('d-alias').value.trim();
+  document.getElementById('alias-error').classList.toggle('show', val.length === 0);
+}
+function confirmAddNode() {
+  const alias = document.getElementById('d-alias').value.trim();
+  if (!alias) { validateAlias(); return; }
+  closeAddDialogDirect();
+  showToast('success', `節點「${alias}」已成功添加。`);
+}
+
+/* ═══════════════════════════════════════════
+   DELETE DIALOG (candidate)
+═══════════════════════════════════════════ */
+let pendingDeleteIdx = null;
+function openDeleteDialog(idx) {
+  pendingDeleteIdx = idx;
+  document.getElementById('delete-node-name').textContent = filteredData[idx].name;
+  document.getElementById('delete-dialog-overlay').classList.add('open');
+}
+function closeDeleteDialog(e) {
+  if (e.target === document.getElementById('delete-dialog-overlay')) closeDeleteDialogDirect();
+}
+function closeDeleteDialogDirect() {
+  document.getElementById('delete-dialog-overlay').classList.remove('open');
+  pendingDeleteIdx = null;
+}
+function confirmDelete() {
+  if (pendingDeleteIdx === null) return;
+  const name = filteredData[pendingDeleteIdx].name;
+  // remove from candidateData
+  const globalIdx = candidateData.indexOf(filteredData[pendingDeleteIdx]);
+  if (globalIdx > -1) candidateData.splice(globalIdx, 1);
+  closeDeleteDialogDirect();
+  filterTable();
+  showToast('success', `候選節點「${name}」已刪除。`);
+}
+
+/* ═══════════════════════════════════════════
+   MANUAL ADD TABLE
+═══════════════════════════════════════════ */
+let manualRows = [];       // confirmed rows
+let editingRow = null;     // current editing row data
+
+const tagOptions = ['production','staging','edge-node','factory-a','factory-b'];
+
+function initManualTable() {
+  addEditRow();
+}
+initManualTable();
+
+function renderManualTable() {
+  const tbody = document.getElementById('manual-tbody');
+  const rows = [];
+
+  // confirmed rows
+  manualRows.forEach((row, i) => {
+    rows.push(`
+      <tr class="row-confirmed">
+        <td class="row-num">${i + 1}</td>
+        <td><span class="cell-value">${esc(row.alias)}</span></td>
+        <td><span class="cell-value">${esc(row.desc || '—')}</span></td>
+        <td><span class="cell-value">${esc(row.tag || '—')}</span></td>
+        <td><span class="cell-value">${esc(row.addr)}</span></td>
+        <td><span class="cell-value">${esc(row.port)}</span></td>
+        <td>
+          <button class="btn-icon danger" title="刪除此列" onclick="deleteManualRow(${i})">
+            <span class="material-icons" style="font-size:18px">delete</span>
+          </button>
+        </td>
+      </tr>
+    `);
+  });
+
+  // editing row
+  const nextNum = manualRows.length + 1;
+  rows.push(`
+    <tr id="edit-row">
+      <td class="row-num">${nextNum}</td>
+      <td>
+        <input class="cell-input" id="e-alias" type="text" placeholder="必填" maxlength="60"
+          value="${esc(editingRow?.alias || '')}" oninput="onEditInput()" />
+        <div class="row-error-hint" id="err-alias"></div>
+      </td>
+      <td>
+        <input class="cell-input" id="e-desc" type="text" placeholder="選填" maxlength="100"
+          value="${esc(editingRow?.desc || '')}" />
+      </td>
+      <td>
+        <select class="cell-select" id="e-tag">
+          <option value="">— 選填 —</option>
+          ${tagOptions.map(t => `<option ${editingRow?.tag === t ? 'selected' : ''}>${t}</option>`).join('')}
+        </select>
+      </td>
+      <td>
+        <input class="cell-input" id="e-addr" type="text" placeholder="必填（IP 或 hostname）"
+          value="${esc(editingRow?.addr || '')}" oninput="onEditInput()" onblur="validateAddr()" />
+        <div class="row-error-hint" id="err-addr"></div>
+      </td>
+      <td>
+        <input class="cell-input" id="e-port" type="number" min="1" max="65535" placeholder="1–65535"
+          value="${esc(editingRow?.port || '')}" oninput="onEditInput()" onblur="validatePort()" />
+        <div class="row-error-hint" id="err-port"></div>
+      </td>
+      <td>
+        <button class="btn btn-outlined btn-xs" onclick="confirmEditRow()">加入</button>
+      </td>
+    </tr>
+  `);
+
+  tbody.innerHTML = rows.join('');
+
+  // update submit btn
+  const submitBtn = document.getElementById('submit-btn');
+  const count = document.getElementById('confirmed-count');
+  submitBtn.disabled = manualRows.length === 0;
+  count.textContent = manualRows.length > 0 ? `已確認 ${manualRows.length} 筆` : '';
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function onEditInput() {
+  const alias = document.getElementById('e-alias')?.value.trim();
+  const addr  = document.getElementById('e-addr')?.value.trim();
+  const port  = document.getElementById('e-port')?.value.trim();
+  // no action needed, confirm btn always visible
+}
+
+function validateAddr() {
+  const addr = document.getElementById('e-addr')?.value.trim();
+  const errEl = document.getElementById('err-addr');
+  if (!errEl) return true;
+  if (!addr) { errEl.textContent = ''; return true; }
+  const ipRe = /^(\d{1,3}\.){3}\d{1,3}$|^[a-zA-Z0-9.-]+$/;
+  const valid = ipRe.test(addr);
+  errEl.textContent = valid ? '' : '格式不正確，請輸入合法 IP 或 hostname';
+  return valid || !addr;
+}
+
+function validatePort() {
+  const port = parseInt(document.getElementById('e-port')?.value);
+  const errEl = document.getElementById('err-port');
+  if (!errEl) return true;
+  if (!port) { errEl.textContent = ''; return true; }
+  const valid = port >= 1 && port <= 65535;
+  errEl.textContent = valid ? '' : '連接埠必須介於 1–65535 之間';
+  return valid;
+}
+
+function confirmEditRow() {
+  const alias = document.getElementById('e-alias').value.trim();
+  const addr  = document.getElementById('e-addr').value.trim();
+  const port  = document.getElementById('e-port').value.trim();
+
+  let hasErr = false;
+  document.getElementById('err-alias').textContent = '';
+  if (!alias) { document.getElementById('err-alias').textContent = '別名為必填'; hasErr = true; }
+  if (!addr)  { document.getElementById('err-addr').textContent = '地址為必填'; hasErr = true; }
+  if (!port)  { document.getElementById('err-port').textContent = '連接埠為必填'; hasErr = true; }
+  if (port && (parseInt(port) < 1 || parseInt(port) > 65535)) {
+    document.getElementById('err-port').textContent = '連接埠必須介於 1–65535'; hasErr = true;
+  }
+  if (hasErr) return;
+
+  // validate format
+  if (!validateAddr() || !validatePort()) return;
+
+  manualRows.push({
+    alias, desc: document.getElementById('e-desc').value.trim(),
+    tag: document.getElementById('e-tag').value,
+    addr, port
+  });
+  editingRow = null;
+  renderManualTable();
+}
+
+function deleteManualRow(idx) {
+  manualRows.splice(idx, 1);
+  renderManualTable();
+}
+
+function addEditRow() {
+  editingRow = { alias:'', desc:'', tag:'', addr:'', port:'' };
+  renderManualTable();
+}
+
+function submitNodes() {
+  if (manualRows.length === 0) return;
+  showToast('success', `已送出 ${manualRows.length} 筆節點，返回管理清單中…`);
+  setTimeout(() => {
+    manualRows = [];
+    editingRow = null;
+    initManualTable();
+    showView('list-view');
+  }, 1800);
+}
+
+/* ═══════════════════════════════════════════
+   TSV UPLOAD
+═══════════════════════════════════════════ */
+function downloadTemplate(e) {
+  e.preventDefault();
+  showToast('success', '準備開始下載 node-template.tsv');
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('drop-zone').classList.remove('dragging');
+  const file = e.dataTransfer.files[0];
+  processFile(file);
+}
+
+function handleFileSelect(input) {
+  const file = input.files[0];
+  processFile(file);
+  input.value = '';
+}
+
+function processFile(file) {
+  if (!file) return;
+  if (!file.name.endsWith('.tsv')) {
+    showToast('error', '格式錯誤：請上傳 TSV 格式的檔案');
+    return;
+  }
+  if (file.size > 1024 * 1024) {
+    showToast('error', '檔案超出 1MB 上限，請減少節點數量後重試');
+    return;
+  }
+  // Simulate parse: add mock rows
+  const list = document.getElementById('uploaded-list');
+  list.innerHTML = `
+    <div class="uploaded-file">
+      <span class="material-icons" style="color:var(--status-success);font-size:20px">check_circle</span>
+      <span class="file-name">${file.name}</span>
+      <span class="file-size">${(file.size / 1024).toFixed(1)} KB</span>
+      <button class="btn-icon" onclick="this.parentElement.remove();removeImportedRows()" title="移除">
+        <span class="material-icons" style="font-size:18px">close</span>
+      </button>
+    </div>
+  `;
+  // mock: push 3 sample rows into manualRows
+  manualRows.push(
+    { alias:'import-node-01', desc:'匯入節點', tag:'production', addr:'10.10.1.1', port:'8080' },
+    { alias:'import-node-02', desc:'匯入節點', tag:'production', addr:'10.10.1.2', port:'8080' },
+    { alias:'import-node-03', desc:'', tag:'staging', addr:'10.10.2.1', port:'9000' },
+  );
+  renderManualTable();
+  showToast('success', `已從 ${file.name} 匯入 3 筆節點`);
+}
+
+function removeImportedRows() { /* simplified: in real app, track which rows came from import */ }
+
+/* ═══════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════ */
+function showToast(type, msg) {
+  const container = document.getElementById('toast-container');
+  const icon = type === 'success' ? 'check_circle' : 'error';
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.innerHTML = `
+    <span class="material-icons toast-icon ${type}">${icon}</span>
+    <span class="toast-msg">${msg}</span>
+  `;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transition = 'opacity .3s';
+    setTimeout(() => toast.remove(), 300);
+  }, 3500);
+}
+</script>
+</body>
+</html>

@@ -681,6 +681,88 @@ html { scroll-behavior: smooth; }
   font-family: 'Roboto'; font-size: 12px; color: var(--primary);
   border-top: 1px solid var(--divider);
 }
+
+/* ─────────────────────────────────────────
+   FEATURE TITLE DEMO
+───────────────────────────────────────── */
+.ft-demo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 56px;
+  padding: 8px 24px;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--divider);
+  box-sizing: border-box;
+}
+.ft-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+.ft-crumb {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 24px;
+  white-space: nowrap;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: default;
+}
+.ft-crumb--link {
+  color: var(--secondary);
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity .15s;
+}
+.ft-crumb--link:hover { opacity: .72; }
+.ft-crumb--current {
+  color: var(--text-high);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ft-sep {
+  font-family: 'Material Icons';
+  font-size: 24px;
+  line-height: 24px;
+  color: var(--secondary);
+  user-select: none;
+  flex-shrink: 0;
+}
+.ft-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+.ft-btn {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 16px;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+  transition: background .15s, opacity .15s;
+}
+.ft-btn--outlined {
+  background: transparent;
+  border: 1px solid var(--secondary);
+  color: var(--secondary);
+}
+.ft-btn--outlined:hover { background: var(--comp-hover-secondary); }
+.ft-btn--contained {
+  background: var(--primary);
+  color: #ffffff;
+}
+.ft-btn--contained:hover { background: var(--comp-hover-contained); }
 </style>
 </head>
 <body>
@@ -773,6 +855,7 @@ html { scroll-behavior: smooth; }
     <div class="platform-nav-sub open">
       <a class="platform-nav-sub-item" href="#platform-navbar">Navigation bar</a>
       <a class="platform-nav-sub-item" href="#platform-sidenav">Side menu</a>
+      <a class="platform-nav-sub-item" href="#feature-title">FeatureTitle</a>
     </div>
 
     <!-- 全局樣式 -->
@@ -1633,6 +1716,112 @@ html { scroll-behavior: smooth; }
       </div>
     </section>
 
+    <!-- ── FEATURE TITLE ── -->
+    <section class="section" id="feature-title">
+      <div class="section-title">FeatureTitle</div>
+      <div class="section-desc">固定在 NavigationBar 下方的頁面標題列（高度 56px）。左側為麵包屑導航，最多顯示 5 層；右側為 CTA 按鈕插槽。搭配 <code>position: sticky; top: 56px</code> 使其黏貼在畫面上方。</div>
+
+      <!-- Default: 2 levels -->
+      <div class="subsection">
+        <div class="subsection-title">2 層導航 + 操作按鈕</div>
+        <div class="demo-box" style="padding:0;overflow:hidden;display:block;background:var(--bg-surface-dim)">
+          <div class="ft-demo" id="ft-demo-2">
+            <nav class="ft-nav" aria-label="Page breadcrumb">
+              <button class="ft-crumb ft-crumb--link" onclick="ftLog('規則設定')">規則設定</button>
+              <span class="material-icons ft-sep" aria-hidden="true">navigate_next</span>
+              <span class="ft-crumb ft-crumb--current" aria-current="page">創建</span>
+            </nav>
+            <div class="ft-actions">
+              <button class="ft-btn ft-btn--outlined" onclick="ftLog('取消')">取消</button>
+              <button class="ft-btn ft-btn--contained" onclick="ftLog('創建')">創建</button>
+            </div>
+          </div>
+          <div id="ft-log" style="padding:8px 24px;font-size:12px;color:var(--text-medium);min-height:28px;border-top:1px solid var(--divider)">點擊上方按鈕或麵包屑查看互動</div>
+        </div>
+      </div>
+
+      <!-- 5 levels, no actions -->
+      <div class="subsection">
+        <div class="subsection-title">5 層導航（最大層數）</div>
+        <div class="demo-box" style="padding:0;overflow:hidden;display:block">
+          <div class="ft-demo">
+            <nav class="ft-nav" aria-label="Page breadcrumb">
+              <button class="ft-crumb ft-crumb--link" onclick="ftLog('系統管理')">系統管理</button>
+              <span class="material-icons ft-sep" aria-hidden="true">navigate_next</span>
+              <button class="ft-crumb ft-crumb--link" onclick="ftLog('規則設定')">規則設定</button>
+              <span class="material-icons ft-sep" aria-hidden="true">navigate_next</span>
+              <button class="ft-crumb ft-crumb--link" onclick="ftLog('告警規則')">告警規則</button>
+              <span class="material-icons ft-sep" aria-hidden="true">navigate_next</span>
+              <button class="ft-crumb ft-crumb--link" onclick="ftLog('規則群組')">規則群組</button>
+              <span class="material-icons ft-sep" aria-hidden="true">navigate_next</span>
+              <span class="ft-crumb ft-crumb--current" aria-current="page">詳細設定</span>
+            </nav>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3 levels, 1 action -->
+      <div class="subsection">
+        <div class="subsection-title">3 層導航 + 單一按鈕</div>
+        <div class="demo-box" style="padding:0;overflow:hidden;display:block">
+          <div class="ft-demo">
+            <nav class="ft-nav" aria-label="Page breadcrumb">
+              <button class="ft-crumb ft-crumb--link" onclick="ftLog('設備管理')">設備管理</button>
+              <span class="material-icons ft-sep" aria-hidden="true">navigate_next</span>
+              <button class="ft-crumb ft-crumb--link" onclick="ftLog('連線模板')">連線模板</button>
+              <span class="material-icons ft-sep" aria-hidden="true">navigate_next</span>
+              <span class="ft-crumb ft-crumb--current" aria-current="page">新增模板</span>
+            </nav>
+            <div class="ft-actions">
+              <button class="ft-btn ft-btn--contained" onclick="ftLog('儲存')">
+                <span class="material-icons" style="font-size:16px;vertical-align:-3px;margin-right:4px">save</span>儲存
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Anatomy -->
+      <div class="subsection">
+        <div class="subsection-title">Anatomy</div>
+        <div class="demo-box col">
+          <table class="typo-table">
+            <thead><tr><th>元素</th><th>規格</th><th>Token</th></tr></thead>
+            <tbody>
+              <tr><td>容器高度</td><td>min-height 56px · padding 8px 24px</td><td>bg: <code>bg-surface</code> · border-bottom: <code>divider</code></td></tr>
+              <tr><td>Position</td><td>sticky · top: 56px（NavBar 高度）</td><td>z-index: 10（sticky）</td></tr>
+              <tr><td>非當前層文字</td><td>Noto Sans TC Medium · 20px · line-height 24px</td><td><code>secondary</code> (#727171)</td></tr>
+              <tr><td>當前層文字</td><td>Noto Sans TC Medium · 20px · line-height 24px</td><td><code>text-high</code> (#333333)</td></tr>
+              <tr><td>分隔符號</td><td>Material Icon <code>navigate_next</code> · 24px</td><td><code>secondary</code></td></tr>
+              <tr><td>最大層數</td><td>5 層（超出部分截斷）</td><td>—</td></tr>
+              <tr><td>右側按鈕區</td><td>flex-shrink: 0 · gap 16px</td><td>—</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Code snippet -->
+      <div class="subsection">
+        <div class="subsection-title">TSX 引用</div>
+        <div class="demo-box col" style="background:#1e1e1e;border-radius:8px;padding:20px">
+          <pre style="margin:0;font-family:'Roboto Mono',monospace;font-size:13px;line-height:1.6;color:#d4d4d4;overflow-x:auto"><code><span style="color:#569cd6">import</span> { FeatureTitle, Button } <span style="color:#569cd6">from</span> <span style="color:#ce9178">'@delta/fas-design-system'</span>;
+
+<span style="color:#569cd6">&lt;FeatureTitle</span>
+  <span style="color:#9cdcfe">items</span><span style="color:#d4d4d4">={[</span>
+    { <span style="color:#9cdcfe">label</span>: <span style="color:#ce9178">'規則設定'</span>, <span style="color:#9cdcfe">onClick</span>: () => navigate(<span style="color:#ce9178">'/rules'</span>) },
+    { <span style="color:#9cdcfe">label</span>: <span style="color:#ce9178">'創建'</span> },   <span style="color:#6a9955">// 最後一項：current，無 onClick</span>
+  <span style="color:#d4d4d4">]}</span>
+  <span style="color:#9cdcfe">actions</span><span style="color:#d4d4d4">={</span>
+    <span style="color:#569cd6">&lt;&gt;</span>
+      <span style="color:#569cd6">&lt;Button</span> <span style="color:#9cdcfe">variant</span>=<span style="color:#ce9178">"outlined"</span> <span style="color:#9cdcfe">color</span>=<span style="color:#ce9178">"secondary"</span> <span style="color:#9cdcfe">size</span>=<span style="color:#ce9178">"s"</span> <span style="color:#9cdcfe">onClick</span><span style="color:#d4d4d4">={handleCancel}</span><span style="color:#569cd6">&gt;</span>取消<span style="color:#569cd6">&lt;/Button&gt;</span>
+      <span style="color:#569cd6">&lt;Button</span> <span style="color:#9cdcfe">variant</span>=<span style="color:#ce9178">"contained"</span> <span style="color:#9cdcfe">size</span>=<span style="color:#ce9178">"s"</span> <span style="color:#9cdcfe">onClick</span><span style="color:#d4d4d4">={handleCreate}</span><span style="color:#569cd6">&gt;</span>創建<span style="color:#569cd6">&lt;/Button&gt;</span>
+    <span style="color:#569cd6">&lt;/&gt;</span>
+  <span style="color:#d4d4d4">}</span>
+<span style="color:#569cd6">/&gt;</span></code></pre>
+        </div>
+      </div>
+    </section>
+
     <!-- ── TYPOGRAPHY ── -->
     <section class="section" id="typography">
       <div class="section-title">Typography</div>
@@ -1888,6 +2077,19 @@ function toggleDarkMode() {
 function toggleSidenav() {
   const sidenav = document.querySelector('.platform-sidenav.page-sidenav');
   sidenav.classList.toggle('collapsed');
+}
+
+// FeatureTitle interactive log
+function ftLog(label) {
+  const el = document.getElementById('ft-log');
+  if (!el) return;
+  el.textContent = `已點擊：「${label}」`;
+  el.style.color = 'var(--primary)';
+  clearTimeout(el._t);
+  el._t = setTimeout(() => {
+    el.textContent = '點擊上方按鈕或麵包屑查看互動';
+    el.style.color = 'var(--text-medium)';
+  }, 2000);
 }
 
 // Platform sidenav group expand/collapse

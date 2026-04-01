@@ -1,0 +1,8 @@
+{
+  "name": "delta",
+  "private": true,
+  "workspaces": [
+    "fas-design-system",
+    "eap+"
+  ]
+}

@@ -40,6 +40,7 @@
 - [Text Field](#text-field)
 - [Tab](#tab)
 - [Uploader](#uploader)
+- [FeatureTitle](#featuretitle)
 - [Layout](#layout)
   - [版面結構](#版面結構)
   - [Breakpoints](#breakpoints)
@@ -1657,6 +1658,97 @@ Viewport 1920px
 
 ---
 
-> 最後更新：2026-03-31（合併 layout.md；Navigation bar / Side menu 收折行為更新）
+---
+
+## FeatureTitle
+
+**Component ID:** `8670-89537` · **Figma Node（參考）：** `I8670:89544;8236:58087`（Breadcrumb wrapper）
+
+### 說明
+
+固定在 NavigationBar 下方的頁面標題列，高度 56px。
+左側顯示麵包屑導航，表示當前頁面的層級位置（最多 5 層）；右側可放入 CTA 按鈕。
+
+### 規格
+
+| 項目 | 規格 |
+|------|------|
+| 高度 | 56px（`min-height: 56px`） |
+| Position | `sticky; top: 56px`（緊接 NavBar 下方） |
+| Z-index | `sticky`（10） |
+| 背景 | `elevation / surface / 04dp`（= `background / surface` #ffffff） |
+| 下邊線 | `1px solid var(--divider)` |
+| Padding | `8px 24px` |
+| 內部 gap | `16px` |
+
+### 麵包屑（左側）
+
+| 項目 | 規格 |
+|------|------|
+| 字型 | Noto Sans TC Medium，20px，line-height 24px |
+| 非當前項顏色 | `secondary`（#727171） |
+| 當前項顏色 | `text / high`（#333333） |
+| 分隔符號 | Material Icon `navigate_next`（24px，`secondary` 色） |
+| 最大層數 | 5 層 |
+| 可點擊狀態 | 以 `<button>` 渲染，cursor pointer |
+
+### 按鈕區（右側）
+
+| 項目 | 規格 |
+|------|------|
+| 排列 | `flex-shrink: 0`，`gap: 16px` |
+| 建議數量 | 最多 2 個按鈕 |
+| 常見組合 | Text outlined（取消）+ Contained（主要動作） |
+
+### Props
+
+```tsx
+interface FeatureTitleItem {
+  label:    string;
+  onClick?: () => void;   // 有 onClick → 可點擊；無 → current（最後一項）
+}
+
+interface FeatureTitleProps {
+  items:      FeatureTitleItem[];   // 最多 5 層
+  actions?:   React.ReactNode;      // 右側按鈕區
+  className?: string;
+  topOffset?: number;               // 預設 56（NavBar 高度）
+}
+```
+
+### 使用範例
+
+```tsx
+import { FeatureTitle } from '@delta/fas-design-system';
+import { Button } from '@delta/fas-design-system';
+
+<FeatureTitle
+  items={[
+    { label: '規則設定', onClick: () => navigate('/rules') },
+    { label: '創建' },                    // 最後一項：current，無 onClick
+  ]}
+  actions={
+    <>
+      <Button variant="outlined" color="secondary" size="s" onClick={handleCancel}>
+        取消
+      </Button>
+      <Button variant="contained" size="s" onClick={handleCreate} disabled={!isValid}>
+        創建
+      </Button>
+    </>
+  }
+/>
+```
+
+### 注意事項
+
+- `items` 超過 5 層時，只顯示前 5 層；實作層需自行截斷或警告。
+- `topOffset` 預設 `56`，若 NavBar 高度改變（如通知欄出現），需同步調整。
+- 最後一項 `FeatureTitleItem` 不應傳入 `onClick`（會被渲染成當前頁面文字）。
+- 若無 `actions`，右側不渲染任何元素，麵包屑自動佔滿全寬。
+
+---
+
+> 最後更新：2026-04-01（新增 FeatureTitle 元件）
 > 顏色數值請查閱 `token.md`，Token 名稱格式為 `分類 / 子項目`
 > 樣式規格來源：Figma Web Design Kit (Beta) — 透過 Figma MCP 直接擷取
